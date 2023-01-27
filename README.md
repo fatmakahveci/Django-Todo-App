@@ -2,7 +2,9 @@
 
 # Todo App
 
-A project for learning purposes.
+🎯 A project for learning purposes.
+
+🦦 You can check my [Django](https://fatmakahveci.com/coding/django/) notes in my blog.
 
 ## Installation
 
