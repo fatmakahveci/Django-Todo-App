@@ -8,6 +8,10 @@
 A focused, responsive task workspace built with Django. Plan your day with
 priorities, due dates, progress summaries, and private, user-owned tasks.
 
+![Daymark demo: add a task, set a due date, filter, edit, and complete it.](docs/assets/demo.gif)
+
+The demo uses sample data.
+
 ## Highlights
 
 - Account registration, safe login redirects, and CSRF-protected logout
