@@ -1,0 +1,89 @@
+{% extends 'tasks/base.html' %}
+{% block content %}
+<header class="page-heading dashboard-hero">
+  <div class="hero-copy">
+    <p class="eyebrow">A CLEAR MIND. A GOOD DAY.</p>
+    <h1>A little focus.<br><span>A lot of possibility.</span></h1>
+    <p class="subtitle">Welcome back, {{ user.username }}. {% if stats.open %}You have {{ stats.open }} task{{ stats.open|pluralize }} to make your own.{% else %}You've got a little room to breathe.{% endif %}</p>
+    <a class="button primary" href="{% url 'task-create' %}"><span aria-hidden="true">＋</span> Create a task</a>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+    <div class="note note-back"><span>One step at a time.</span><i></i><i></i></div>
+    <div class="note note-front"><span class="note-check">✓</span><span>Make room<br>for what matters.</span><small>YOUR DAY, BY DESIGN</small></div>
+    <span class="spark spark-one">✳</span><span class="spark spark-two">＋</span>
+  </div>
+</header>
+<div class="section-label"><span>THE BIG PICTURE</span><span>Every small step counts</span></div>
+<section class="stats" aria-label="Task overview">
+  <a class="stat" href="{% url 'tasks' %}?status=open"><span><i class="stat-dot dot-open" aria-hidden="true"></i>Still to do</span><strong>{{ stats.open|stringformat:"02d" }}</strong><small>Room to make progress</small></a>
+  <a class="stat" href="{% url 'tasks' %}?status=completed"><span><i class="stat-dot dot-done" aria-hidden="true"></i>Completed</span><strong>{{ stats.completed|stringformat:"02d" }}</strong><small>Small wins, adding up</small></a>
+  <a class="stat" href="{% url 'tasks' %}?status=overdue"><span><i class="stat-dot dot-overdue" aria-hidden="true"></i>Needs attention</span><strong>{{ stats.overdue|stringformat:"02d" }}</strong><small>Past the due date</small></a>
+  <div class="stat progress-card"><span>Your progress</span><strong>{{ stats.progress }}<em>%</em></strong><progress aria-label="Task completion" value="{{ stats.completed }}" max="{{ stats.total|default:1 }}">{{ stats.progress }}%</progress><small>{{ stats.completed }} of {{ stats.total }} tasks complete</small></div>
+</section>
+<section class="quick-add-panel" aria-labelledby="quick-add-title">
+  <div><h2 id="quick-add-title">Get it out of your head.</h2><p>Add a task now. Set the details when you're ready.</p></div>
+  <form method="post" action="{{ request.get_full_path }}" class="quick-add-form">
+    {% csrf_token %}
+    <label class="sr-only" for="quick-title">Task title</label>
+    {{ quick_form.title }}
+    <div class="quick-date"><label for="quick-due">Due date <span class="optional">Optional</span></label>{{ quick_form.due_date }}</div>
+    <button class="button primary" type="submit">＋ Add task</button>
+    {% if quick_form.title.errors %}<div class="quick-errors" role="alert">{{ quick_form.title.errors }}</div>{% endif %}
+    {% if quick_form.due_date.errors %}<div class="quick-errors" role="alert">{{ quick_form.due_date.errors }}</div>{% endif %}
+  </form>
+</section>
+<section class="task-panel" aria-labelledby="list-title">
+  <div class="panel-heading"><h2 id="list-title">{% if status == "completed" %}Your wins{% elif status == "overdue" %}A little attention{% else %}Your next steps{% endif %} <span class="count">{{ paginator.count }}</span></h2><a class="export-link" href="{% url 'task-export' %}">JSON ↓</a> <a class="export-link" href="{% url 'task-export-csv' %}">CSV ↓</a></div>
+  <div class="toolbar">
+    <nav class="tabs" aria-label="Filter tasks">
+      <a {% if status == 'all' %}aria-current="page"{% endif %} href="{% querystring status='all' page=None %}">All tasks</a>
+      <a {% if status == 'open' %}aria-current="page"{% endif %} href="{% querystring status='open' page=None %}">To do</a>
+      <a {% if status == 'today' %}aria-current="page"{% endif %} href="{% querystring status='today' page=None %}">Today</a>
+      <a {% if status == 'upcoming' %}aria-current="page"{% endif %} href="{% querystring status='upcoming' page=None %}">Next 7 days</a>
+      <a {% if status == 'completed' %}aria-current="page"{% endif %} href="{% querystring status='completed' page=None %}">Completed</a>
+      <a {% if status == 'overdue' %}aria-current="page"{% endif %} href="{% querystring status='overdue' page=None %}">Overdue</a>
+      <a {% if status == 'undated' %}aria-current="page"{% endif %} href="{% querystring status='undated' page=None %}">No date</a>
+    </nav>
+    <form class="search" method="get" role="search"><label class="sr-only" for="search">Search tasks</label><input id="search" name="search-area" type="search" maxlength="200" placeholder="Search your tasks…" value="{{ search_input }}"><input type="hidden" name="status" value="{{ status }}"><label class="sr-only" for="task-sort">Sort tasks</label>
+      <select id="task-sort" name="sort">
+        <option value="priority" {% if sort == 'priority' %}selected{% endif %}>Priority first</option>
+        <option value="due" {% if sort == 'due' %}selected{% endif %}>Due date</option>
+        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest first</option>
+        <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+      </select>
+      <label class="sr-only" for="priority-filter">Filter priority</label>
+      <select id="priority-filter" name="priority">
+        <option value="">All priorities</option>
+        <option value="1" {% if priority == '1' %}selected{% endif %}>High priority</option>
+        <option value="2" {% if priority == '2' %}selected{% endif %}>Normal priority</option>
+        <option value="3" {% if priority == '3' %}selected{% endif %}>Low priority</option>
+      </select>
+      <label class="sr-only" for="page-size">Tasks per page</label>
+      <select id="page-size" name="per_page">
+        <option value="12" {% if per_page == 12 %}selected{% endif %}>12 per page</option>
+        <option value="24" {% if per_page == 24 %}selected{% endif %}>24 per page</option>
+        <option value="48" {% if per_page == 48 %}selected{% endif %}>48 per page</option>
+      </select><button type="submit">Apply</button></form>
+  </div>
+  {% if search_input or status != 'all' or priority %}
+  <div class="filter-summary">
+    <p>{{ paginator.count }} result{{ paginator.count|pluralize }}{% if search_input %} for <strong>“{{ search_input }}”</strong>{% endif %}{% if status != 'all' %} · {{ status|capfirst }}{% endif %}</p>
+    <a href="{% url 'tasks' %}">Clear filters <span aria-hidden="true">×</span></a>
+  </div>
+  {% endif %}
+  <ul class="task-list">
+    {% for task in tasks %}
+    <li class="task-row {% if task.complete %}is-complete{% elif task.is_overdue %}is-overdue{% endif %}">
+      <form method="post" action="{% url 'task-status' task.pk %}">{% csrf_token %}<input type="hidden" name="return_to" value="{{ request.get_full_path }}"><input type="hidden" name="complete" value="{% if task.complete %}false{% else %}true{% endif %}"><button class="check-button" type="submit" aria-label="{% if task.complete %}Reopen{% else %}Complete{% endif %} {{ task.title }}">{% if task.complete %}✓{% endif %}</button></form>
+      <div class="task-copy"><a class="task-title" href="{% url 'task' task.pk %}">{{ task.title }}</a>{% if task.description %}<details class="task-notes"><summary>{{ task.description|truncatechars:75 }}</summary><div>{{ task.description|linebreaks }}</div></details>{% endif %}<div class="task-meta">{% if task.complete %}<span class="badge completed-badge">✓ Completed</span>{% endif %}<span class="badge priority-{{ task.priority }}">{{ task.get_priority_display }} priority</span>{% if task.due_date %}<span class="due {% if task.is_overdue %}overdue{% endif %}">{% if task.is_overdue %}Overdue · {% endif %}{{ task.due_date|date:'j M Y' }}</span>{% endif %}</div></div>
+      <a class="edit-link" href="{% url 'task-update' task.pk %}?return_to={{ request.get_full_path|urlencode }}" aria-label="Edit {{ task.title }}">Edit ↗</a>
+    </li>
+    {% empty %}
+    <li class="empty"><span class="empty-icon" aria-hidden="true">✓</span><h3>{% if search_input or status != 'all' or priority %}Nothing here just yet{% else %}A fresh start{% endif %}</h3><p>{% if search_input or status != 'all' or priority %}Try a different search or filter to find your tasks.{% else %}Clear your mind. Add your first task and take it one step at a time.{% endif %}</p><a class="button" href="{% if search_input or status != 'all' or priority %}{% url 'tasks' %}{% else %}{% url 'task-create' %}{% endif %}">{% if search_input or status != 'all' or priority %}View all tasks{% else %}＋ Create your first task{% endif %}</a></li>
+    {% endfor %}
+  </ul>
+  {% if is_paginated %}<nav class="pagination" aria-label="Pagination">{% if page_obj.has_previous %}<a class="button" href="{% querystring page=page_obj.previous_page_number %}">← Previous</a>{% endif %}<span><strong>{{ page_obj.start_index }}–{{ page_obj.end_index }}</strong> of {{ paginator.count }} tasks</span>{% if page_obj.has_next %}<a class="button" href="{% querystring page=page_obj.next_page_number %}">Next →</a>{% endif %}</nav>{% endif %}
+</section>
+<details class="shortcut-help"><summary>Keyboard shortcuts</summary><p><kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd> focuses quick add. <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> focuses search. Shortcuts are inactive while typing in a field.</p></details>
+{% endblock %}

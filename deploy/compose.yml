@@ -1,0 +1,22 @@
+name: todo-app
+services:
+  web:
+    image: ${IMAGE:?Set IMAGE to the deployed Docker tag}
+    restart: unless-stopped
+    env_file:
+      - ${APP_ENV_FILE:?Set APP_ENV_FILE to the server environment file}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - app-data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+volumes:
+  app-data:

@@ -1,0 +1,3 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Sign in{% endblock %}
+{% block content %}<div class="auth-wrap"><p class="eyebrow">WELCOME BACK</p><h1>A little focus.<br>A fresh perspective.</h1><p class="subtitle">Sign in and pick up where you left off.</p><form class="form-card" method="post">{% csrf_token %}{{ form.as_div }}<input type="hidden" name="next" value="{{ next }}"><button class="button primary" type="submit">Sign in →</button></form><p class="auth-switch">New here? <a href="{% url 'register' %}">Create an account</a></p></div>{% endblock %}
