@@ -15,13 +15,18 @@ The demo uses sample data.
 ## Highlights
 
 - Account registration, safe login redirects, and CSRF-protected logout
-- Create, edit, complete, reopen, and delete your own tasks
+- Create, edit, complete, reopen, and safely trash/restore your own tasks
+- Projects, tags, subtasks, and daily/weekly/monthly recurring tasks
+- Password change/reset, email verification, and opt-in daily email reminders
+- Turkish/English interface and personal timezone settings
+- Installable PWA with a private-data-free offline fallback
+- Checked SQLite backups, off-host Restic jobs, and minimal error events
 - High / normal / low priorities and optional due dates
 - Search titles and notes; filter open, completed, or overdue tasks
 - Quick task capture directly from the dashboard with Enter
 - Today / next-seven-days views and priority, due-date, or creation-date sorting
 - List context preserved after editing or completing tasks
-- Private JSON download of all your tasks
+- Private JSON/CSV downloads of active tasks; JSON includes collections and subtasks
 - Progress summaries and pagination for larger lists
 - Responsive layout, keyboard focus styles, accessible form labels, and empty states
 - Automatic import of legacy `base_task` records during migration
@@ -62,12 +67,13 @@ Open http://127.0.0.1:8000.
 4. Choose a sort order and press **Apply**. Search matches titles and notes.
 5. Complete a task using its circle button. Your current search, filter, and sort
    remain active; an emptied final page falls back to the last available page.
-6. Use **Download my tasks** for a JSON copy of all your tasks, regardless of the
-   active filter. This is a data export, not a full database backup or an import tool.
+6. Use **JSON ↓** for an export of all active tasks, including project/tag names,
+   recurrence, and subtasks, regardless of filters. Trashed tasks are excluded.
+   This is a data export, not a full database backup or an import tool.
 
-Dates use the configured server time zone, UTC by default. For local time,
-set `DJANGO_TIME_ZONE` (for example `Europe/London` or `Europe/Istanbul`) before
-starting Django; Docker deployments can set it in the server `.env` file.
+Choose **Account settings** to set your language and personal timezone (for example
+`Europe/Istanbul`). Before saving personal preferences, dates use `DJANGO_TIME_ZONE`,
+UTC by default. The sign-in page also offers a language selector.
 
 ### More Ways to Work
 
@@ -80,11 +86,30 @@ starting Django; Docker deployments can set it in the server `.env` file.
 - For open tasks, **Move to tomorrow / next week** sets a date one or seven days
   from today. A task already scheduled later keeps its existing date.
 - **Save & add another** opens a fresh form after creating a task.
-- Download all your tasks as **JSON** or **CSV**. Formula-like CSV text is
+- Download all active tasks as **JSON** or **CSV**. Formula-like CSV text is
   prefixed with an apostrophe for safer spreadsheet opening.
 - On the dashboard, **Alt+Shift+N** focuses quick add and **Alt+Shift+F** focuses
   search. Shortcuts do nothing while typing in a form field; all actions also
   work without JavaScript using the visible controls.
+
+### Organize and recover
+
+- Create **Projects & tags**, then assign them in the task editor and filter the list.
+- Add or check off **Subtasks** from the task detail page. Their completion is independent.
+- Set **Repeat** and a due date. Completing a task creates one next occurrence from
+  its previous due date, carrying over collections and resetting its checklist.
+  Monthly tasks preserve their anchor day: January 31 → February 28 → March 31.
+  Overdue repeats advance one interval at a time; reopening/re-completing a task
+  does not create another occurrence. Editing its date establishes a new anchor.
+- Deleted tasks go to **Trash**, stay out of active lists/exports, and can be restored.
+  Permanent deletion has a separate confirmation and also removes subtasks.
+- Use **Account settings** for password changes, email verification, and reminder opt-in.
+  Password recovery and reminders require server-side SMTP configuration.
+- Install Daymark using your browser's **Install/Add to Home Screen** option. Viewing
+  and changing tasks requires a connection; offline mode shows a generic reconnect screen.
+
+See [operations and service setup](docs/operations.md) for SMTP, scheduled backup and
+restore checks, reminder scheduling, monitoring, and activation requirements.
 
 ## Quality Checks
 
@@ -103,6 +128,8 @@ Django-Todo-App/
 ├── docs/
 │   └── assets/           # Documentation images
 ├── tasks/                # Task management application
+│   ├── management/       # Backup, restore verification, and reminder commands
+│   ├── locale/           # Turkish translation catalog
 │   ├── migrations/       # Database schema migrations
 │   ├── static/tasks/     # Application stylesheet
 │   ├── templates/tasks/  # Application templates
@@ -117,6 +144,7 @@ are runtime files, not application source.
 
 ## Project Resources
 
+- [Operations, email, backups, and monitoring](docs/operations.md)
 - [CI and release delivery](docs/ci-cd.md)
 - [Database upgrades and backups](docs/database-upgrades.md)
 - [Changelog](CHANGELOG.md)

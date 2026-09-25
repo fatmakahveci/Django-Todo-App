@@ -1,0 +1,25 @@
+# Install in nginx's http context; replace the domain and certificate paths.
+limit_req_zone $binary_remote_addr zone=daymark:10m rate=10r/s;
+server {
+    listen 80;
+    access_log off;
+    server_name todo.example.com;
+    return 301 https://todo.example.com$request_uri;
+}
+server {
+    listen 443 ssl;
+    server_name todo.example.com;
+    ssl_certificate /etc/letsencrypt/live/todo.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/todo.example.com/privkey.pem;
+    client_max_body_size 64k;
+    location / {
+        limit_req zone=daymark burst=20 nodelay;
+        limit_req_status 429;
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Avoid logging URLs containing password-reset tokens or private searches.
+        access_log off;
+    }
+}

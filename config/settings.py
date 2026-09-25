@@ -43,10 +43,12 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'tasks.observability.ErrorIdMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'tasks.preferences.PreferencesMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'tasks.middleware.AppSecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -134,3 +136,21 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 AUTH_TRUSTED_PROXIES = [value.strip() for value in os.environ.get("AUTH_TRUSTED_PROXIES", "").split(",") if value.strip()]
+
+MAIL_ENABLED = os.environ.get('MAIL_ENABLED', 'false').lower() == 'true'
+PUBLIC_BASE_URL = os.environ.get('PUBLIC_BASE_URL', 'http://localhost:8000')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@localhost')
+MAILERS = {'default': {
+    # Application email actions are gated by MAIL_ENABLED; SMTP is production-ready.
+    'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+    'OPTIONS': {
+        'host': os.environ.get('SMTP_HOST', 'localhost'),
+        'port': int(os.environ.get('SMTP_PORT', '587')),
+        'username': os.environ.get('SMTP_USER', ''),
+        'password': os.environ.get('SMTP_PASSWORD', ''),
+        'use_tls': True, 'timeout': 10,
+    },
+}}
+PASSWORD_RESET_TIMEOUT = 3600
+
+LANGUAGES = [('en', 'English'), ('tr', 'Türkçe')]

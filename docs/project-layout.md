@@ -16,6 +16,14 @@ The template namespace prevents collisions with templates from future apps.
 Application CSS lives in `tasks/static/tasks/`; task form configuration lives in
 `tasks/forms.py`. CI and production override settings in separate modules.
 
+Account flows live in `tasks/accounts.py`, collection/trash/subtask actions in
+`tasks/organize.py`, and shared recurrence logic in `tasks/services.py`. Preferences,
+PWA responses, and privacy-preserving error events each have dedicated modules.
+`tasks/management/commands/` contains operational commands; `tasks/locale/` contains
+translation sources and compiled catalogs. After changing translated strings, run
+`makemessages -l tr` and `compilemessages -l tr` (GNU gettext required) and commit both.
+`deploy/systemd/` contains opt-in backup/reminder timers. See `docs/operations.md`.
+
 Tests live in `tasks/tests/`, with filenames beginning with `test_`. Run the
 suite with `python manage.py test` or just this app with
 `python manage.py test tasks`.

@@ -1,0 +1,10 @@
+[Unit]
+Description=Verify and upload an encrypted Daymark database backup
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/daymark-backup.env
+ExecStart=/bin/bash /opt/daymark-tools/backup-offsite.sh
+UMask=0077

@@ -1,0 +1,1 @@
+{% extends 'tasks/base.html' %}{% load i18n %}{% block content %}<section class="form-card"><h1>{% translate 'Verify email' %}</h1><form method="post">{% csrf_token %}<button class="button primary" type="submit">{% translate 'Confirm my email address' %}</button></form></section>{% endblock %}

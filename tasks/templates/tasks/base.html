@@ -1,45 +1,54 @@
+{% load i18n %}
 {% load static %}
 <!doctype html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}<html lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A calmer place to organize your day.">
-  <title>{% block title %}My tasks{% endblock %} · Daymark</title>
-  <meta name="theme-color" content="#1e382f">
+  <title>{% block title %}{% translate "My tasks" %}{% endblock %} {% translate "· Daymark" %}</title>
+  <link rel="manifest" href="{% url 'manifest' %}">
+  <link rel="icon" href="{% static 'tasks/icons/icon-192.png' %}" type="image/png">
+  <link rel="apple-touch-icon" href="{% static 'tasks/icons/icon-192.png' %}">
+  <meta name="theme-color" content="#202944">
   <link rel="preload" href="{% static 'tasks/fonts/dm-sans.ttf' %}" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="{% static 'tasks/app.css' %}">
 </head>
 <body class="{% if user.is_authenticated %}workspace{% else %}auth-page{% endif %}">
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main">{% translate "Skip to content" %}</a>
 <div class="shell">
   <aside class="sidebar">
-    <a class="brand" href="{% url 'tasks' %}"><span class="brand-icon" aria-hidden="true">✓</span> daymark<span class="brand-dot">.</span></a>
-    <p class="sidebar-caption">A LITTLE MORE FOCUS.</p>
-    <nav aria-label="Main navigation">
+    <a class="brand" href="{% url 'tasks' %}"><span class="brand-icon" aria-hidden="true">✓</span> {% translate "daymark" %}<span class="brand-dot">.</span></a>
+    <p class="sidebar-caption">{% translate "A LITTLE MORE FOCUS." %}</p>
+    <nav aria-label="{% translate 'Main navigation' %}">
       {% if user.is_authenticated %}
-      <a class="nav-item" {% if request.resolver_match.url_name == "tasks" %}aria-current="page"{% endif %} href="{% url 'tasks' %}"><span aria-hidden="true">▤</span> My tasks</a>
-      <a class="nav-item" {% if request.resolver_match.url_name == "task-create" %}aria-current="page"{% endif %} href="{% url 'task-create' %}"><span aria-hidden="true">＋</span> New task</a>
+      <a class="nav-item" {% if request.resolver_match.url_name == "tasks" %}aria-current="page"{% endif %} href="{% url 'tasks' %}"><span aria-hidden="true">▤</span> {% translate "My tasks" %}</a>
+      <a class="nav-item" {% if request.resolver_match.url_name == "task-create" %}aria-current="page"{% endif %} href="{% url 'task-create' %}"><span aria-hidden="true">＋</span> {% translate "New task" %}</a>
+      <a class="nav-item" href="{% url 'collections' %}">{% translate "Projects & tags" %}</a>
+      <a class="nav-item" href="{% url 'trash' %}">{% translate "Trash" %}</a>
+      <a class="nav-item" href="{% url 'account-settings' %}">{% translate "Account settings" %}</a>
       {% else %}
-      <a class="nav-item" {% if request.resolver_match.url_name == "login" %}aria-current="page"{% endif %} href="{% url 'login' %}">Sign in</a>
-      <a class="nav-item" {% if request.resolver_match.url_name == "register" %}aria-current="page"{% endif %} href="{% url 'register' %}">Create account</a>
+      <a class="nav-item" {% if request.resolver_match.url_name == "login" %}aria-current="page"{% endif %} href="{% url 'login' %}">{% translate "Sign in" %}</a>
+      <a class="nav-item" {% if request.resolver_match.url_name == "register" %}aria-current="page"{% endif %} href="{% url 'register' %}">{% translate "Create account" %}</a>
       {% endif %}
     </nav>
-    <div class="sidebar-bottom">
-      <p>Big things start<br>with one small task.</p>
+    <div class="sidebar-bottom"><button class="button" id="install-app" type="button" hidden>{% translate "Install app" %}</button>
+      {% if not user.is_authenticated %}<form method="post" action="{% url 'set_language' %}" class="language-switch">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><label for="language">{% translate "Language" %}</label><select id="language" name="language"><option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option><option value="tr" {% if LANGUAGE_CODE == 'tr' %}selected{% endif %}>Türkçe</option></select><button class="button" type="submit">{% translate "Apply" %}</button></form>{% endif %}
+      <p>{% translate "Big things start" %}<br>{% translate "with one small task." %}</p>
       {% if user.is_authenticated %}
       <div class="account"><span class="avatar">{{ user.username|first|upper }}</span><span class="username">{{ user.username }}</span></div>
-      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="signout" type="submit">Sign out ↗</button></form>
-      {% else %}<span class="small">Your space. Your pace.</span>{% endif %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="signout" type="submit">{% translate "Sign out ↗" %}</button></form>
+      {% else %}<span class="small">{% translate "Your space. Your pace." %}</span>{% endif %}
     </div>
   </aside>
   <main id="main" tabindex="-1">
-    <div class="topline"><span><i class="workspace-dot" aria-hidden="true"></i> YOUR EVERYDAY WORKSPACE</span><time datetime="{% now 'Y-m-d' %}">{% now "l, j F Y" %}</time></div>
+    <div class="topline"><span><i class="workspace-dot" aria-hidden="true"></i> {% translate "YOUR EVERYDAY WORKSPACE" %}</span><time datetime="{% now 'Y-m-d' %}">{% now "l, j F Y" %}</time></div>
     {% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}
     {% block content %}{% endblock %}
-    <footer>Make space for what matters.</footer>
+    <footer>{% translate "Make space for what matters." %}</footer>
   </main>
 </div>
 <script src="{% static 'tasks/shortcuts.js' %}" defer></script>
+<script src="{% static 'tasks/install.js' %}" defer></script>
 </body>
 </html>

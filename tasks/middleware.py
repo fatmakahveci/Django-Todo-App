@@ -16,7 +16,7 @@ from .models import AuthAttemptBucket
 class AppSecurityMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
         name = request.resolver_match.view_name if request.resolver_match else None
-        if request.method != "POST" or name not in {"login", "register", "admin:login"}:
+        if request.method != "POST" or name not in {"login", "register", "admin:login", "password_reset", "send-verification"}:
             return None
         now = timezone.now()
         window = int(now.timestamp()) // 300
@@ -32,7 +32,9 @@ class AppSecurityMiddleware(MiddlewareMixin):
             pass
         rules = [(f"ip:{address}", 40), (f"register:{address}", 5)] if name == "register" else [(f"ip:{address}", 40)]
         username = unicodedata.normalize("NFKC", request.POST.get("username", "")).casefold().strip()
-        if username and name != "register":
+        if name in {"password_reset", "send-verification"}:
+            rules.append((f"email:{address}", 5))
+        if username and name in {"login", "admin:login"}:
             rules.append((f"account:{username}", 10))
         AuthAttemptBucket.objects.filter(expires_at__lte=now - timedelta(minutes=5)).delete()
         for identity, limit in rules:

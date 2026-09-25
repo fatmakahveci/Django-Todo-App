@@ -10,12 +10,21 @@ where applicable.
 
 ### Security
 
+- Private structured error events and access logs without reset tokens or request data.
+- Signed, expiring email verification and throttled password reset requests.
+
 - Shared login/admin/registration throttling with hashed identifiers.
 - Fail-closed production secret and host validation, strict CSP and private caching.
 - Bounded request bodies and note lengths.
 - Removed local SQLite database from Git tracking without deleting local data.
 
 ### Added
+
+- Restorable trash, owner-scoped projects/tags, recurrence with month-end anchors, and subtasks.
+- Account preferences, password recovery, verified-email opt-in reminders, and per-user timezones.
+- Turkish UI, installable PWA, and a generic offline fallback without cached private data.
+- SQLite backup/restore commands and scheduled off-host backup/recovery rehearsals.
+- Navy/lavender palette and refreshed sample-data demo.
 
 - Quick-add due dates, priority/undated filters, and selectable page sizes.
 - Task duplication, tomorrow/next-week scheduling, and save-and-add-another.

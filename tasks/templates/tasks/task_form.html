@@ -1,11 +1,11 @@
 {% extends 'tasks/base.html' %}
-{% block title %}{% if object %}Edit task{% else %}New task{% endif %}{% endblock %}
+{% load i18n %}{% block title %}{% if object %}{% translate "Edit task" %}{% else %}{% translate "New task" %}{% endif %}{% endblock %}
 {% block content %}
-<a class="back-link" href="{% if return_to %}{{ return_to }}{% else %}{% url 'tasks' %}{% endif %}">← Back to tasks</a>
+<a class="back-link" href="{% if return_to %}{{ return_to }}{% else %}{% url 'tasks' %}{% endif %}">{% translate "← Back to tasks" %}</a>
 <div class="form-heading">
-  <p class="eyebrow">MAKE A LITTLE PROGRESS</p>
-  <h1>{% if object %}Fine-tune the plan{% else %}Start with one thing.{% endif %}</h1>
-  <p class="subtitle">A clear next step is a good place to begin.</p>
+  <p class="eyebrow">{% translate "MAKE A LITTLE PROGRESS" %}</p>
+  <h1>{% if object %}{% translate "Fine-tune the plan" %}{% else %}{% translate "Start with one thing." %}{% endif %}</h1>
+  <p class="subtitle">{% translate "A clear next step is a good place to begin." %}</p>
 </div>
 <div class="editor-layout">
   <form class="form-card task-editor" method="post">
@@ -18,7 +18,7 @@
         {% if field.name == 'complete' %}
         <div class="checkbox-field">{{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
         {% else %}
-        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-mark" aria-hidden="true"> *</span>{% else %}<span class="optional">Optional</span>{% endif %}</label>
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-mark" aria-hidden="true"> *</span>{% else %}<span class="optional">{% translate "Optional" %}</span>{% endif %}</label>
         {{ field }}
         {% endif %}
         {% if field.errors %}<div role="alert">{{ field.errors }}</div>{% endif %}
@@ -26,13 +26,13 @@
       </div>
       {% endfor %}
     </div>
-    <div class="form-actions"><button class="button primary" type="submit">{% if object %}Save changes{% else %}Create task{% endif %}<span aria-hidden="true">↗</span></button>{% if not object %}<button class="button" type="submit" name="add_another" value="true">Save & add another</button>{% endif %}<a class="button secondary" href="{% if return_to %}{{ return_to }}{% else %}{% url 'tasks' %}{% endif %}">Cancel</a></div>
+    <div class="form-actions"><button class="button primary" type="submit">{% if object %}{% translate "Save changes" %}{% else %}{% translate "Create task" %}{% endif %}<span aria-hidden="true">↗</span></button>{% if not object %}<button class="button" type="submit" name="add_another" value="true">{% translate "Save & add another" %}</button>{% endif %}<a class="button secondary" href="{% if return_to %}{{ return_to }}{% else %}{% url 'tasks' %}{% endif %}">{% translate "Cancel" %}</a></div>
   </form>
-  <aside class="editor-aside" aria-label="Planning tips">
+  <aside class="editor-aside" aria-label="{% translate 'Planning tips' %}">
     <span class="aside-symbol" aria-hidden="true">✳</span>
-    <h2>Keep it<br>achievable.</h2>
-    <p>The best task is one you know how to start.</p>
-    <ol><li><strong>Name the next step.</strong> Start with an action, like “Write the first draft.”</li><li><strong>Give it context.</strong> Add the notes you'll want when you come back.</li><li><strong>Set your own pace.</strong> A due date is optional. Pick one when it helps.</li></ol>
+    <h2>{% translate "Keep it" %}<br>{% translate "achievable." %}</h2>
+    <p>{% translate "The best task is one you know how to start." %}</p>
+    <ol><li><strong>{% translate "Name the next step." %}</strong> {% translate "Start with an action, like “Write the first draft.”" %}</li><li><strong>{% translate "Give it context." %}</strong> {% translate "Add the notes you'll want when you come back." %}</li><li><strong>{% translate "Set your own pace." %}</strong> {% translate "A due date is optional. Pick one when it helps." %}</li></ol>
   </aside>
 </div>
 {% endblock %}
