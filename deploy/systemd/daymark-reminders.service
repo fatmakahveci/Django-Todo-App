@@ -1,0 +1,9 @@
+[Unit]
+Description=Send opted-in Daymark reminders
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/daymark-backup.env
+ExecStart=/bin/bash /opt/daymark-tools/send-reminders.sh
+UMask=0077

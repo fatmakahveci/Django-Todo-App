@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 import csv
 import json
 from datetime import timedelta
@@ -5,11 +6,11 @@ from urllib.parse import urlsplit
 
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import Count, F, Q
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
@@ -19,7 +20,9 @@ from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 
 from .forms import QuickTaskForm, TaskForm
-from .models import Task
+from .accounts import RegistrationForm
+from .models import Task, Project, Tag
+from .services import schedule_next
 
 
 def list_return_url(request):
@@ -43,7 +46,7 @@ class CustomLoginView(LoginView):
 
 class RegisterPage(FormView):
     template_name = "tasks/auth_register.html"
-    form_class = UserCreationForm
+    form_class = RegistrationForm
     success_url = reverse_lazy("tasks")
 
     def dispatch(self, request, *args, **kwargs):
@@ -53,7 +56,7 @@ class RegisterPage(FormView):
 
     def form_valid(self, form):
         login(self.request, form.save())
-        messages.success(self.request, "Welcome! Make room for what matters.")
+        messages.success(self.request, _("Welcome! Make room for what matters."))
         return super().form_valid(form)
 
 
@@ -62,7 +65,7 @@ class OwnedTaskMixin(LoginRequiredMixin):
 
     def get_queryset(self):
         # Enforce ownership before resolving any task ID, including write requests.
-        return super().get_queryset().filter(user=self.request.user)
+        return super().get_queryset().filter(user=self.request.user, deleted_at__isnull=True)
 
 
 class TaskList(OwnedTaskMixin, ListView):
@@ -71,6 +74,11 @@ class TaskList(OwnedTaskMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        for field, model in [('project', Project), ('tag', Tag)]:
+            value = self.request.GET.get(field, '')
+            if value.isascii() and value.isdigit() and len(value) < 19:
+                relation = 'project_id' if field == 'project' else 'tags__id'
+                queryset = queryset.filter(**{relation: int(value)})
         self.search_input = self.request.GET.get("search-area", "").strip()[:200]
         self.status = self.request.GET.get("status", "all")
         if self.status not in {"all", "open", "completed", "overdue", "today", "upcoming", "undated"}:
@@ -122,7 +130,7 @@ class TaskList(OwnedTaskMixin, ListView):
             task = self.quick_form.save(commit=False)
             task.user = request.user
             task.save()
-            messages.success(request, "Task added. Add another whenever you're ready.")
+            messages.success(request, _("Task added. Add another whenever you're ready."))
             return redirect("tasks")
         self.object_list = self.get_queryset()
         return self.render_to_response(self.get_context_data(), status=400)
@@ -130,7 +138,7 @@ class TaskList(OwnedTaskMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Dashboard totals describe all owned tasks, independently of the current filter.
-        stats = Task.objects.filter(user=self.request.user).aggregate(
+        stats = Task.objects.filter(user=self.request.user, deleted_at__isnull=True).aggregate(
             total=Count("pk"),
             completed=Count("pk", filter=Q(complete=True)),
             overdue=Count("pk", filter=Q(complete=False, due_date__lt=timezone.localdate())),
@@ -138,6 +146,7 @@ class TaskList(OwnedTaskMixin, ListView):
         stats["open"] = stats["total"] - stats["completed"]
         stats["progress"] = round(stats["completed"] * 100 / stats["total"]) if stats["total"] else 0
         context.update(
+            projects=Project.objects.filter(user=self.request.user), tags=Tag.objects.filter(user=self.request.user),
             stats=stats, count=stats["open"], search_input=self.search_input,
             status=self.status, sort=self.sort, priority=self.priority,
             per_page=self.get_paginate_by(self.object_list),
@@ -150,16 +159,24 @@ class TaskDetail(OwnedTaskMixin, DetailView):
     context_object_name = "task"
 
 
-class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class OwnedFormMixin:
+    def get_form_kwargs(self):
+        return {**super().get_form_kwargs(), 'user': self.request.user}
+
+
+class TaskCreate(OwnedFormMixin, LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Task
     form_class = TaskForm
     success_url = reverse_lazy("tasks")
-    success_message = "Task added. One step closer."
+    success_message = _("Task added. One step closer.")
 
     def form_valid(self, form):
         # Ownership always comes from the session, never from submitted form data.
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        with transaction.atomic():
+            response = super().form_valid(form)
+            schedule_next(self.object)
+        return response
 
     def get_success_url(self):
         if self.request.POST.get("add_another") == "true":
@@ -167,10 +184,20 @@ class TaskCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return super().get_success_url()
 
 
-class TaskUpdate(OwnedTaskMixin, SuccessMessageMixin, UpdateView):
+class TaskUpdate(OwnedFormMixin, OwnedTaskMixin, SuccessMessageMixin, UpdateView):
     form_class = TaskForm
     success_url = reverse_lazy("tasks")
-    success_message = "Task updated."
+    success_message = _("Task updated.")
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            # Serialise edits/completion with the same row lock as the status action.
+            Task.objects.select_for_update().get(pk=self.object.pk)
+            if 'due_date' in form.changed_data:
+                form.instance.recurrence_day = None
+            response = super().form_valid(form)
+            schedule_next(self.object)
+        return response
 
     def get_success_url(self):
         return list_return_url(self.request)
@@ -184,12 +211,18 @@ class TaskUpdate(OwnedTaskMixin, SuccessMessageMixin, UpdateView):
 class TaskDelete(OwnedTaskMixin, SuccessMessageMixin, DeleteView):
     context_object_name = "task"
     success_url = reverse_lazy("tasks")
-    success_message = "Task deleted."
+    success_message = _("Task moved to trash.")
+
+    def form_valid(self, form):
+        self.object.deleted_at = timezone.now()
+        self.object.save(update_fields=['deleted_at'])
+        messages.success(self.request, self.success_message)
+        return redirect(self.success_url)
 
 
 class TaskStatus(OwnedTaskMixin, View):
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        return Task.objects.filter(user=self.request.user, deleted_at__isnull=True)
 
     def post(self, request, pk):
         task = get_object_or_404(self.get_queryset(), pk=pk)
@@ -197,19 +230,26 @@ class TaskStatus(OwnedTaskMixin, View):
         if value not in {"true", "false"}:
             return HttpResponseBadRequest("Expected complete=true or complete=false.")
         # Assign the requested state rather than toggling: retrying a POST is safe.
-        task.complete = value == "true"
-        task.save(update_fields=["complete"])
-        messages.success(request, "Task completed." if task.complete else "Task reopened.")
+        with transaction.atomic():
+            task = Task.objects.select_for_update().get(pk=task.pk)
+            task.complete = value == "true"
+            task.save(update_fields=["complete"])
+            schedule_next(task)
+        messages.success(request, _("Task completed.") if task.complete else _("Task reopened."))
         return redirect(list_return_url(request))
 
 
 class TaskExport(LoginRequiredMixin, View):
     def get(self, request):
-        tasks = list(Task.objects.filter(user=request.user).values(
-            "title", "description", "priority", "due_date", "complete", "create"
-        ))
+        tasks = []
+        queryset = Task.objects.filter(user=request.user, deleted_at__isnull=True).select_related('project').prefetch_related('tags', 'subtasks')
+        for task in queryset:
+            tasks.append({field: getattr(task, field) for field in ['title', 'description', 'priority', 'due_date', 'complete', 'create', 'recurrence']})
+            tasks[-1].update(project=task.project.name if task.project else None,
+                tags=[tag.name for tag in task.tags.all()],
+                subtasks=[{'title': item.title, 'complete': item.complete} for item in task.subtasks.all()])
         response = HttpResponse(
-            json.dumps({"format": "daymark-tasks", "version": 1, "tasks": tasks},
+            json.dumps({"format": "daymark-tasks", "version": 2, "tasks": tasks},
                        cls=DjangoJSONEncoder, ensure_ascii=False, indent=2),
             content_type="application/json",
         )
@@ -220,30 +260,35 @@ class TaskExport(LoginRequiredMixin, View):
 
 class TaskDuplicate(LoginRequiredMixin, View):
     def post(self, request, pk):
-        original = get_object_or_404(Task, pk=pk, user=request.user)
+        original = get_object_or_404(Task, pk=pk, user=request.user, deleted_at__isnull=True)
         copy = Task.objects.create(
             user=request.user, title=f"{original.title[:193]} (copy)",
             description=original.description, priority=original.priority,
-            due_date=original.due_date, complete=False,
+            due_date=original.due_date, complete=False, project=original.project, recurrence=original.recurrence,
         )
-        messages.success(request, "Task copied. Adjust the details for a fresh start.")
+        copy.tags.set(original.tags.all())
+        for item in original.subtasks.all():
+            copy.subtasks.create(title=item.title)
+        messages.success(request, _("Task copied. Adjust the details for a fresh start."))
         return redirect("task-update", pk=copy.pk)
 
 
 class TaskPostpone(LoginRequiredMixin, View):
     def post(self, request, pk):
-        task = get_object_or_404(Task, pk=pk, user=request.user)
+        task = get_object_or_404(Task, pk=pk, user=request.user, deleted_at__isnull=True)
         days = request.POST.get("days")
         if days not in {"1", "7"} or task.complete:
             return HttpResponseBadRequest("Choose tomorrow or next week for an open task.")
         # These are absolute targets relative to today; retries don't add more days.
         target = timezone.localdate() + timedelta(days=int(days))
         if task.due_date and task.due_date > target:
-            messages.info(request, "This task is already scheduled later; its date was kept.")
+            messages.info(request, _("This task is already scheduled later; its date was kept."))
         else:
+            if task.due_date != target:
+                task.recurrence_day = None
             task.due_date = target
-            task.save(update_fields=["due_date"])
-            messages.success(request, "Due date updated.")
+            task.save(update_fields=["due_date", "recurrence_day"])
+            messages.success(request, _("Due date updated."))
         return redirect("task", pk=task.pk)
 
 
@@ -263,7 +308,7 @@ class TaskCSVExport(LoginRequiredMixin, View):
         response.write("\ufeff")  # Let spreadsheet applications detect UTF-8 correctly.
         writer = csv.writer(response)
         writer.writerow(["Title", "Notes", "Priority", "Due date", "Completed", "Created"])
-        for task in Task.objects.filter(user=request.user).iterator():
+        for task in Task.objects.filter(user=request.user, deleted_at__isnull=True).iterator():
             writer.writerow([csv_cell(task.title), csv_cell(task.description),
                              task.get_priority_display(), task.due_date or "",
                              "Yes" if task.complete else "No", task.create.isoformat()])

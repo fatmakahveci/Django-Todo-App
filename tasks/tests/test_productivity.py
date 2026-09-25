@@ -95,7 +95,7 @@ class ProductivityTests(TestCase):
         self.assertIn('private', response['Cache-Control'])
         self.assertIn('no-store', response['Cache-Control'])
         data = response.json()
-        self.assertEqual(data['version'], 1)
+        self.assertEqual(data['version'], 2)
         self.assertEqual([task['title'] for task in data['tasks']], ['My task'])
         self.assertNotIn('user', data['tasks'][0])
         self.client.logout()

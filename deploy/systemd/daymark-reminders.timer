@@ -1,0 +1,10 @@
+[Unit]
+Description=Check Daymark reminders hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

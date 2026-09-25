@@ -92,6 +92,11 @@ unverified `ssh-keyscan` result. For nonstandard ports use the corresponding
 underscores, hyphens, and slashes. Use environment protection rules to limit
 deployments to `main` if desired.
 
+`deploy/nginx.conf.example` provides a proxy template. Configure SMTP, backups,
+reminder scheduling, and optional monitoring with [the operations guide](operations.md).
+Missing production variables fail the deployment configuration step with an explicit
+message; they do not prevent pull-request CI from validating the application.
+
 ### Runtime and persistence
 
 The container runs Gunicorn as an unprivileged user with production settings;

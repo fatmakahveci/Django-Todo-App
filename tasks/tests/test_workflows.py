@@ -58,7 +58,7 @@ class WorkflowTests(TestCase):
         self.assertTrue(task.complete)
         self.assertEqual(task.title, "Updated")
         self.assertRedirects(self.client.post(reverse("task-delete", args=[task.pk])), reverse("tasks"))
-        self.assertFalse(Task.objects.filter(pk=task.pk).exists())
+        self.assertTrue(Task.objects.filter(pk=task.pk, deleted_at__isnull=False).exists())
 
     def test_blank_title_and_invalid_priority_are_rejected(self):
         for data in [{"title": "   ", "priority": 2}, {"title": "Invalid", "priority": 9}]:
@@ -143,7 +143,7 @@ class WorkflowTests(TestCase):
 
     def test_registration_creates_session(self):
         self.client.logout()
-        response = self.client.post(reverse("register"), {"username": "new-person", "password1": "a-unique-passphrase-852", "password2": "a-unique-passphrase-852"})
+        response = self.client.post(reverse("register"), {"username": "new-person", "email": "new@example.test", "password1": "a-unique-passphrase-852", "password2": "a-unique-passphrase-852"})
         self.assertRedirects(response, reverse("tasks"))
         self.assertIn("_auth_user_id", self.client.session)
 

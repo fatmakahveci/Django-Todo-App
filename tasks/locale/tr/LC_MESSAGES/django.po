@@ -1,0 +1,1091 @@
+# Turkish translations for Daymark.
+# Copyright (C) Daymark contributors
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Daymark\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-25 21:31+0000\n"
+"PO-Revision-Date: 2026-09-25 21:35+0000\n"
+"Last-Translator: Daymark contributors\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: tasks/accounts.py:26 tasks/accounts.py:33
+msgid "Email address"
+msgstr "E-posta adresi"
+
+#: tasks/accounts.py:34
+msgid "Current password"
+msgstr "Mevcut parola"
+
+#: tasks/accounts.py:35
+msgid "Required only when changing your email address."
+msgstr "Yalnızca e-posta adresinizi değiştirirken gereklidir."
+
+#: tasks/accounts.py:36
+msgid "Time zone"
+msgstr "Saat dilimi"
+
+#: tasks/accounts.py:41 tasks/templates/tasks/base.html:36
+msgid "Language"
+msgstr "Dil"
+
+#: tasks/accounts.py:41
+msgid "Email reminders"
+msgstr "E-posta hatırlatmaları"
+
+#: tasks/accounts.py:41
+msgid "Reminder hour (local time)"
+msgstr "Hatırlatma saati (yerel saat)"
+
+#: tasks/accounts.py:53
+msgid "Enter your current password to change your email."
+msgstr "E-postanızı değiştirmek için mevcut parolanızı girin."
+
+#: tasks/accounts.py:55
+msgid "Verify your email before enabling reminders."
+msgstr "Hatırlatmaları açmadan önce e-postanızı doğrulayın."
+
+#: tasks/accounts.py:57
+msgid "Choose an hour between 0 and 23."
+msgstr "0 ile 23 arasında bir saat seçin."
+
+#: tasks/accounts.py:82
+msgid "Preferences saved."
+msgstr "Tercihler kaydedildi."
+
+#: tasks/accounts.py:92 tasks/accounts.py:137
+#: tasks/templates/tasks/account_settings.html:6
+msgid "Email delivery is not configured yet."
+msgstr "E-posta gönderimi henüz yapılandırılmadı."
+
+#: tasks/accounts.py:97
+msgid "Verify your Daymark email"
+msgstr "Daymark e-posta adresinizi doğrulayın"
+
+#: tasks/accounts.py:97
+msgid "Confirm your email address:"
+msgstr "E-posta adresinizi doğrulayın:"
+
+#: tasks/accounts.py:100
+msgid "Email could not be delivered. Please try again later."
+msgstr "E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin."
+
+#: tasks/accounts.py:102
+msgid "Verification email sent. The link expires in 24 hours."
+msgstr "Doğrulama e-postası gönderildi. Bağlantı 24 saat geçerlidir."
+
+#: tasks/accounts.py:122 tasks/templates/tasks/account_settings.html:5
+msgid "Email verified."
+msgstr "E-posta doğrulandı."
+
+#: tasks/accounts.py:124
+msgid "This verification link is invalid or expired."
+msgstr "Bu doğrulama bağlantısı geçersiz veya süresi dolmuş."
+
+#: tasks/forms.py:8 tasks/forms.py:29
+msgid "Add a little context…"
+msgstr "Biraz ayrıntı ekleyin…"
+
+#: tasks/forms.py:15
+msgid ""
+"Hold Ctrl or Command to select several tags. Manage tags under Projects & "
+"tags."
+msgstr ""
+"Birden fazla etiket seçmek için Ctrl veya Command tuşunu basılı tutun. "
+"Etiketleri Projeler ve etiketler bölümünden yönetin."
+
+#: tasks/forms.py:16
+msgid ""
+"Completing this task creates the next occurrence. A due date is required."
+msgstr ""
+"Bu görev tamamlandığında bir sonraki tekrar oluşturulur. Bitiş tarihi "
+"gereklidir."
+
+#: tasks/forms.py:21
+msgid "Choose a due date for a repeating task."
+msgstr "Tekrarlayan görev için bir bitiş tarihi seçin."
+
+#: tasks/forms.py:28
+msgid "What needs to get done?"
+msgstr "Ne yapılması gerekiyor?"
+
+#: tasks/forms.py:32
+msgid "Title"
+msgstr "Başlık"
+
+#: tasks/forms.py:32
+msgid "Notes"
+msgstr "Notlar"
+
+#: tasks/forms.py:32
+msgid "Priority"
+msgstr "Öncelik"
+
+#: tasks/forms.py:32 tasks/organize.py:40
+#: tasks/templates/tasks/task_list.html:77
+msgid "Project"
+msgstr "Proje"
+
+#: tasks/forms.py:32 tasks/templates/tasks/collections.html:1
+msgid "Tags"
+msgstr "Etiketler"
+
+#: tasks/forms.py:32
+msgid "Repeat"
+msgstr "Tekrar"
+
+#: tasks/forms.py:32
+msgid "Mark as completed"
+msgstr "Tamamlandı olarak işaretle"
+
+#: tasks/forms.py:32 tasks/templates/tasks/task_detail.html:5
+#: tasks/templates/tasks/task_list.html:30
+#: tasks/templates/tasks/task_list.html:51
+msgid "Due date"
+msgstr "Bitiş tarihi"
+
+#: tasks/forms.py:40
+msgid "Add a task and press Enter…"
+msgstr "Görevi yazıp Enter tuşuna basın…"
+
+#: tasks/management/commands/send_reminders.py:43
+#, python-format
+msgid "You have %(count)s tasks due today or overdue."
+msgstr "Bugün bitmesi gereken veya gecikmiş %(count)s göreviniz var."
+
+#: tasks/management/commands/send_reminders.py:45
+msgid "You can disable these reminders in Account settings."
+msgstr "Bu hatırlatmaları Hesap ayarları bölümünden kapatabilirsiniz."
+
+#: tasks/management/commands/send_reminders.py:46
+msgid "Your Daymark reminder"
+msgstr "Daymark hatırlatmanız"
+
+#: tasks/models.py:33
+msgid "High"
+msgstr "Yüksek"
+
+#: tasks/models.py:34
+msgid "Normal"
+msgstr "Normal"
+
+#: tasks/models.py:35
+msgid "Low"
+msgstr "Düşük"
+
+#: tasks/models.py:48
+msgid "Never"
+msgstr "Asla"
+
+#: tasks/models.py:48
+msgid "Daily"
+msgstr "Günlük"
+
+#: tasks/models.py:48
+msgid "Weekly"
+msgstr "Haftalık"
+
+#: tasks/models.py:48
+msgid "Monthly"
+msgstr "Aylık"
+
+#: tasks/organize.py:27
+msgid "Task restored."
+msgstr "Görev geri yüklendi."
+
+#: tasks/organize.py:40
+msgid "Type"
+msgstr "Tür"
+
+#: tasks/organize.py:40 tasks/templates/tasks/task_list.html:78
+msgid "Tag"
+msgstr "Etiket"
+
+#: tasks/organize.py:41
+msgid "Name"
+msgstr "Ad"
+
+#: tasks/organize.py:46
+msgid "Tag names can have at most 40 characters."
+msgstr "Etiket adları en fazla 40 karakter olabilir."
+
+#: tasks/organize.py:63
+msgid "Collection saved."
+msgstr "Koleksiyon kaydedildi."
+
+#: tasks/organize.py:95
+msgid "Enter a subtask title of 1–200 characters."
+msgstr "1–200 karakter uzunluğunda bir alt görev başlığı girin."
+
+#: tasks/templates/tasks/account_settings.html:2
+#: tasks/templates/tasks/base.html:29
+msgid "Account settings"
+msgstr "Hesap ayarları"
+
+#: tasks/templates/tasks/account_settings.html:3
+msgid "Save preferences"
+msgstr "Tercihleri kaydet"
+
+#: tasks/templates/tasks/account_settings.html:4
+#: tasks/templates/tasks/password_change_form.html:1
+msgid "Change password"
+msgstr "Parolayı değiştir"
+
+#: tasks/templates/tasks/account_settings.html:5
+msgid "Send verification email"
+msgstr "Doğrulama e-postası gönder"
+
+#: tasks/templates/tasks/auth_login.html:2
+#: tasks/templates/tasks/auth_register.html:3
+#: tasks/templates/tasks/base.html:31
+msgid "Sign in"
+msgstr "Giriş yap"
+
+#: tasks/templates/tasks/auth_login.html:3
+msgid "Forgot your password?"
+msgstr "Parolanızı mı unuttunuz?"
+
+#: tasks/templates/tasks/auth_login.html:3
+msgid "WELCOME BACK"
+msgstr "TEKRAR HOŞ GELDİNİZ"
+
+#: tasks/templates/tasks/auth_login.html:3
+#: tasks/templates/tasks/task_list.html:6
+msgid "A little focus."
+msgstr "Biraz odak."
+
+#: tasks/templates/tasks/auth_login.html:3
+msgid "A fresh perspective."
+msgstr "Yeni bir bakış açısı."
+
+#: tasks/templates/tasks/auth_login.html:3
+msgid "Sign in and pick up where you left off."
+msgstr "Giriş yapın, kaldığınız yerden devam edin."
+
+#: tasks/templates/tasks/auth_login.html:3
+msgid "Sign in →"
+msgstr "Giriş yap →"
+
+#: tasks/templates/tasks/auth_login.html:3
+msgid "New here?"
+msgstr "Yeni misiniz?"
+
+#: tasks/templates/tasks/auth_login.html:3
+msgid "Create an account"
+msgstr "Hesap oluşturun"
+
+#: tasks/templates/tasks/auth_register.html:2
+#: tasks/templates/tasks/base.html:32
+msgid "Create account"
+msgstr "Hesap oluştur"
+
+#: tasks/templates/tasks/auth_register.html:3
+msgid "YOUR NEXT CHAPTER"
+msgstr "YENİ BİR BAŞLANGIÇ"
+
+#: tasks/templates/tasks/auth_register.html:3
+msgid "Start with"
+msgstr "Küçük bir adımla"
+
+#: tasks/templates/tasks/auth_register.html:3
+msgid "a little clarity."
+msgstr "başlayın."
+
+#: tasks/templates/tasks/auth_register.html:3
+msgid "Create your own space to plan, focus, and finish."
+msgstr "Planlamak, odaklanmak ve tamamlamak için kendi alanınızı oluşturun."
+
+#: tasks/templates/tasks/auth_register.html:3
+msgid "Create account →"
+msgstr "Hesap oluştur →"
+
+#: tasks/templates/tasks/auth_register.html:3
+msgid "Already have an account?"
+msgstr "Zaten hesabınız var mı?"
+
+#: tasks/templates/tasks/base.html:9 tasks/templates/tasks/base.html:25
+msgid "My tasks"
+msgstr "Görevlerim"
+
+#: tasks/templates/tasks/base.html:9
+msgid "· Daymark"
+msgstr "· Daymark"
+
+#: tasks/templates/tasks/base.html:18
+msgid "Skip to content"
+msgstr "İçeriğe geç"
+
+#: tasks/templates/tasks/base.html:21
+msgid "daymark"
+msgstr "daymark"
+
+#: tasks/templates/tasks/base.html:22
+msgid "A LITTLE MORE FOCUS."
+msgstr "BİRAZ DAHA ODAK."
+
+#: tasks/templates/tasks/base.html:23
+msgid "Main navigation"
+msgstr "Ana menü"
+
+#: tasks/templates/tasks/base.html:26 tasks/templates/tasks/task_form.html:2
+msgid "New task"
+msgstr "Yeni görev"
+
+#: tasks/templates/tasks/base.html:27 tasks/templates/tasks/collections.html:1
+msgid "Projects & tags"
+msgstr "Projeler ve etiketler"
+
+#: tasks/templates/tasks/base.html:28 tasks/templates/tasks/trash.html:2
+msgid "Trash"
+msgstr "Çöp kutusu"
+
+#: tasks/templates/tasks/base.html:35
+msgid "Install app"
+msgstr "Uygulamayı yükle"
+
+#: tasks/templates/tasks/base.html:36 tasks/templates/tasks/task_list.html:67
+#: tasks/templates/tasks/task_list.html:78
+msgid "Apply"
+msgstr "Uygula"
+
+#: tasks/templates/tasks/base.html:37
+msgid "Big things start"
+msgstr "Büyük işler"
+
+#: tasks/templates/tasks/base.html:37
+msgid "with one small task."
+msgstr "küçük bir görevle başlar."
+
+#: tasks/templates/tasks/base.html:40
+msgid "Sign out ↗"
+msgstr "Çıkış yap ↗"
+
+#: tasks/templates/tasks/base.html:41
+msgid "Your space. Your pace."
+msgstr "Kendi alanınız. Kendi hızınız."
+
+#: tasks/templates/tasks/base.html:45
+msgid "YOUR EVERYDAY WORKSPACE"
+msgstr "GÜNLÜK ÇALIŞMA ALANINIZ"
+
+#: tasks/templates/tasks/base.html:48
+msgid "Make space for what matters."
+msgstr "Önemli şeylere yer açın."
+
+#: tasks/templates/tasks/collections.html:1
+msgid "Create collections here, then assign them when editing a task."
+msgstr "Burada koleksiyon oluşturun, ardından görevleri düzenlerken seçin."
+
+#: tasks/templates/tasks/collections.html:1
+msgid "Add collection"
+msgstr "Koleksiyon ekle"
+
+#: tasks/templates/tasks/collections.html:1
+msgid "Projects"
+msgstr "Projeler"
+
+#: tasks/templates/tasks/collections.html:1
+#: tasks/templates/tasks/delete_collection.html:1
+#: tasks/templates/tasks/task_detail.html:12
+msgid "Remove"
+msgstr "Kaldır"
+
+#: tasks/templates/tasks/collections.html:1
+msgid "No projects yet."
+msgstr "Henüz proje yok."
+
+#: tasks/templates/tasks/collections.html:1
+msgid "No tags yet."
+msgstr "Henüz etiket yok."
+
+#: tasks/templates/tasks/delete_collection.html:1
+msgid "Remove collection"
+msgstr "Koleksiyonu kaldır"
+
+#: tasks/templates/tasks/delete_collection.html:1
+msgid "Your tasks will be kept. Only this collection will be removed."
+msgstr "Görevleriniz korunacak. Yalnızca bu koleksiyon kaldırılacak."
+
+#: tasks/templates/tasks/delete_collection.html:1
+#: tasks/templates/tasks/purge_task.html:1
+#: tasks/templates/tasks/task_form.html:29
+msgid "Cancel"
+msgstr "Vazgeç"
+
+#: tasks/templates/tasks/password_change_done.html:1
+msgid "Your password has been changed."
+msgstr "Parolanız değiştirildi."
+
+#: tasks/templates/tasks/password_change_done.html:1
+#: tasks/templates/tasks/password_reset_complete.html:1
+#: tasks/templates/tasks/password_reset_done.html:1
+msgid "Continue"
+msgstr "Devam et"
+
+#: tasks/templates/tasks/password_change_form.html:1
+msgid "Update password"
+msgstr "Parolayı güncelle"
+
+#: tasks/templates/tasks/password_reset_complete.html:1
+msgid "Your password has been reset. You can now sign in."
+msgstr "Parolanız sıfırlandı. Şimdi giriş yapabilirsiniz."
+
+#: tasks/templates/tasks/password_reset_confirm.html:1
+msgid "Choose a new password"
+msgstr "Yeni bir parola seçin"
+
+#: tasks/templates/tasks/password_reset_confirm.html:1
+msgid "Save password"
+msgstr "Parolayı kaydet"
+
+#: tasks/templates/tasks/password_reset_confirm.html:1
+msgid "This reset link is invalid or expired."
+msgstr "Bu sıfırlama bağlantısı geçersiz veya süresi dolmuş."
+
+#: tasks/templates/tasks/password_reset_confirm.html:1
+msgid "Request a new link"
+msgstr "Yeni bağlantı iste"
+
+#: tasks/templates/tasks/password_reset_done.html:1
+msgid ""
+"If an eligible account matches that email, a reset link will arrive shortly."
+msgstr ""
+"Bu e-posta adresiyle eşleşen uygun bir hesap varsa kısa süre içinde "
+"sıfırlama bağlantısı gönderilecek."
+
+#: tasks/templates/tasks/password_reset_email.txt:1
+msgid "Use this link to reset your Daymark password:"
+msgstr "Daymark parolanızı sıfırlamak için bu bağlantıyı kullanın:"
+
+#: tasks/templates/tasks/password_reset_email.txt:3
+msgid "If you did not request this, you can ignore this email."
+msgstr "Bu isteği siz yapmadıysanız bu e-postayı yok sayabilirsiniz."
+
+#: tasks/templates/tasks/password_reset_form.html:1
+msgid "Reset password"
+msgstr "Parolayı sıfırla"
+
+#: tasks/templates/tasks/password_reset_form.html:1
+msgid "Send reset link"
+msgstr "Sıfırlama bağlantısı gönder"
+
+#: tasks/templates/tasks/password_reset_subject.txt:1
+msgid "Reset your Daymark password"
+msgstr "Daymark parolanızı sıfırlayın"
+
+#: tasks/templates/tasks/purge_task.html:1 tasks/templates/tasks/trash.html:3
+msgid "Delete permanently"
+msgstr "Kalıcı olarak sil"
+
+#: tasks/templates/tasks/purge_task.html:1
+msgid "This removes the task and all its subtasks. This cannot be undone."
+msgstr "Bu görev ve tüm alt görevleri silinir. Bu işlem geri alınamaz."
+
+#: tasks/templates/tasks/server_error.html:1
+msgid "Something went wrong."
+msgstr "Bir sorun oluştu."
+
+#: tasks/templates/tasks/server_error.html:1
+msgid ""
+"Please try again. If the problem continues, share this reference with "
+"support:"
+msgstr "Lütfen tekrar deneyin. Sorun devam ederse bu referansı destek ekibiyle paylaşın:"
+
+#: tasks/templates/tasks/server_error.html:1
+#| msgid "← Back to tasks"
+msgid "Back to tasks"
+msgstr "Görevlere dön"
+
+#: tasks/templates/tasks/task_confirm_delete.html:2
+#: tasks/templates/tasks/task_confirm_delete.html:3
+msgid "Move to trash"
+msgstr "Çöp kutusuna taşı"
+
+#: tasks/templates/tasks/task_confirm_delete.html:3
+msgid "← Keep working"
+msgstr "← Çalışmaya devam et"
+
+#: tasks/templates/tasks/task_confirm_delete.html:3
+msgid "A MOMENT TO DOUBLE-CHECK"
+msgstr "SON BİR KONTROL"
+
+#: tasks/templates/tasks/task_confirm_delete.html:3
+msgid "Let this one go?"
+msgstr "Bu görevi kaldırmak ister misiniz?"
+
+#: tasks/templates/tasks/task_confirm_delete.html:3
+msgid "” will be moved to trash. You can restore it later."
+msgstr "” çöp kutusuna taşınacak. Daha sonra geri yükleyebilirsiniz."
+
+#: tasks/templates/tasks/task_confirm_delete.html:3
+msgid "Keep task"
+msgstr "Görevi sakla"
+
+#: tasks/templates/tasks/task_detail.html:4
+#: tasks/templates/tasks/task_form.html:4
+msgid "← Back to tasks"
+msgstr "← Görevlere dön"
+
+#: tasks/templates/tasks/task_detail.html:5
+#: tasks/templates/tasks/task_list.html:84
+msgid "priority"
+msgstr "öncelik"
+
+#: tasks/templates/tasks/task_detail.html:5
+#: tasks/templates/tasks/task_list.html:20
+#: tasks/templates/tasks/task_list.html:44
+msgid "Completed"
+msgstr "Tamamlandı"
+
+#: tasks/templates/tasks/task_detail.html:5
+#: tasks/templates/tasks/task_list.html:41
+msgid "To do"
+msgstr "Yapılacak"
+
+#: tasks/templates/tasks/task_detail.html:5
+#| msgid "No tags yet."
+msgid "No notes added yet."
+msgstr "Henüz not eklenmedi."
+
+#: tasks/templates/tasks/task_detail.html:5
+msgid "Created"
+msgstr "Oluşturulma"
+
+#: tasks/templates/tasks/task_detail.html:5
+#| msgid "No date"
+msgid "No due date"
+msgstr "Bitiş tarihi yok"
+
+#: tasks/templates/tasks/task_detail.html:5
+#: tasks/templates/tasks/task_form.html:2
+msgid "Edit task"
+msgstr "Görevi düzenle"
+
+#: tasks/templates/tasks/task_detail.html:5
+msgid "Reopen task"
+msgstr "Görevi yeniden aç"
+
+#: tasks/templates/tasks/task_detail.html:5
+msgid "Mark complete"
+msgstr "Tamamla"
+
+#: tasks/templates/tasks/task_detail.html:5
+msgid "Delete task"
+msgstr "Görevi sil"
+
+#: tasks/templates/tasks/task_detail.html:5
+#| msgid "Task title"
+msgid "Task actions"
+msgstr "Görev işlemleri"
+
+#: tasks/templates/tasks/task_detail.html:6
+msgid "Duplicate task"
+msgstr "Görevi kopyala"
+
+#: tasks/templates/tasks/task_detail.html:8
+msgid "Move to tomorrow"
+msgstr "Yarına ertele"
+
+#: tasks/templates/tasks/task_detail.html:8
+msgid "Move to next week"
+msgstr "Gelecek haftaya ertele"
+
+#: tasks/templates/tasks/task_detail.html:12
+msgid "Subtasks"
+msgstr "Alt görevler"
+
+#: tasks/templates/tasks/task_detail.html:12
+msgid "Reopen"
+msgstr "Yeniden aç"
+
+#: tasks/templates/tasks/task_detail.html:12
+msgid "Complete"
+msgstr "Tamamla"
+
+#: tasks/templates/tasks/task_detail.html:12
+msgid "Break this task into smaller steps."
+msgstr "Bu görevi daha küçük adımlara bölün."
+
+#: tasks/templates/tasks/task_detail.html:12
+msgid "New subtask"
+msgstr "Yeni alt görev"
+
+#: tasks/templates/tasks/task_detail.html:12
+msgid "Add subtask"
+msgstr "Alt görev ekle"
+
+#: tasks/templates/tasks/task_form.html:6
+msgid "MAKE A LITTLE PROGRESS"
+msgstr "KÜÇÜK BİR ADIM ATIN"
+
+#: tasks/templates/tasks/task_form.html:7
+msgid "Fine-tune the plan"
+msgstr "Planı netleştirin"
+
+#: tasks/templates/tasks/task_form.html:7
+msgid "Start with one thing."
+msgstr "Tek bir işle başlayın."
+
+#: tasks/templates/tasks/task_form.html:8
+msgid "A clear next step is a good place to begin."
+msgstr "Net bir sonraki adım, iyi bir başlangıçtır."
+
+#: tasks/templates/tasks/task_form.html:21
+#: tasks/templates/tasks/task_list.html:30
+msgid "Optional"
+msgstr "İsteğe bağlı"
+
+#: tasks/templates/tasks/task_form.html:29
+msgid "Save changes"
+msgstr "Değişiklikleri kaydet"
+
+#: tasks/templates/tasks/task_form.html:29
+msgid "Create task"
+msgstr "Görev oluştur"
+
+#: tasks/templates/tasks/task_form.html:29
+msgid "Save & add another"
+msgstr "Kaydet ve yeni görev ekle"
+
+#: tasks/templates/tasks/task_form.html:31
+msgid "Planning tips"
+msgstr "Planlama önerileri"
+
+#: tasks/templates/tasks/task_form.html:33
+msgid "Keep it"
+msgstr "Ulaşılabilir"
+
+#: tasks/templates/tasks/task_form.html:33
+msgid "achievable."
+msgstr "hedefler koyun."
+
+#: tasks/templates/tasks/task_form.html:34
+msgid "The best task is one you know how to start."
+msgstr "En iyi görev, nasıl başlayacağınızı bildiğinizdir."
+
+#: tasks/templates/tasks/task_form.html:35
+msgid "Name the next step."
+msgstr "Sonraki adımı adlandırın."
+
+#: tasks/templates/tasks/task_form.html:35
+msgid "Start with an action, like “Write the first draft.”"
+msgstr "“İlk taslağı yaz” gibi bir eylemle başlayın."
+
+#: tasks/templates/tasks/task_form.html:35
+msgid "Give it context."
+msgstr "Ayrıntıları ekleyin."
+
+#: tasks/templates/tasks/task_form.html:35
+msgid "Add the notes you'll want when you come back."
+msgstr "Geri döndüğünüzde ihtiyaç duyacağınız notları ekleyin."
+
+#: tasks/templates/tasks/task_form.html:35
+msgid "Set your own pace."
+msgstr "Kendi hızınızı belirleyin."
+
+#: tasks/templates/tasks/task_form.html:35
+msgid "A due date is optional. Pick one when it helps."
+msgstr "Bitiş tarihi isteğe bağlıdır. Size yardımcı olacaksa seçin."
+
+#: tasks/templates/tasks/task_list.html:5
+msgid "A CLEAR MIND. A GOOD DAY."
+msgstr "AÇIK BİR ZİHİN. GÜZEL BİR GÜN."
+
+#: tasks/templates/tasks/task_list.html:6
+msgid "A lot of possibility."
+msgstr "Birçok olasılık."
+
+#: tasks/templates/tasks/task_list.html:7
+msgid "Welcome back,"
+msgstr "Tekrar hoş geldiniz,"
+
+#: tasks/templates/tasks/task_list.html:7
+#, python-format
+#| msgid "You have %(count)s tasks due today or overdue."
+msgid "You have %(count)s task to make your own."
+msgid_plural "You have %(count)s tasks to make your own."
+msgstr[0] "Sizi bekleyen %(count)s görev var."
+msgstr[1] "Sizi bekleyen %(count)s görev var."
+
+#: tasks/templates/tasks/task_list.html:7
+msgid "You've got a little room to breathe."
+msgstr "Nefes alacak biraz alanınız var."
+
+#: tasks/templates/tasks/task_list.html:8
+msgid "Create a task"
+msgstr "Görev oluştur"
+
+#: tasks/templates/tasks/task_list.html:12
+msgid "One step at a time."
+msgstr "Her seferinde bir adım."
+
+#: tasks/templates/tasks/task_list.html:13
+msgid "Make room"
+msgstr "Önemli şeylere"
+
+#: tasks/templates/tasks/task_list.html:13
+msgid "for what matters."
+msgstr "yer açın."
+
+#: tasks/templates/tasks/task_list.html:13
+msgid "YOUR DAY, BY DESIGN"
+msgstr "GÜNÜNÜZÜ SİZ TASARLAYIN"
+
+#: tasks/templates/tasks/task_list.html:17
+msgid "THE BIG PICTURE"
+msgstr "GENEL GÖRÜNÜM"
+
+#: tasks/templates/tasks/task_list.html:17
+msgid "Every small step counts"
+msgstr "Her küçük adım değerlidir"
+
+#: tasks/templates/tasks/task_list.html:18
+#| msgid "Task title"
+msgid "Task overview"
+msgstr "Görev özeti"
+
+#: tasks/templates/tasks/task_list.html:19
+msgid "Still to do"
+msgstr "Yapılacaklar"
+
+#: tasks/templates/tasks/task_list.html:19
+msgid "Room to make progress"
+msgstr "İlerlemek için alan"
+
+#: tasks/templates/tasks/task_list.html:20
+msgid "Small wins, adding up"
+msgstr "Biriken küçük başarılar"
+
+#: tasks/templates/tasks/task_list.html:21
+msgid "Needs attention"
+msgstr "Dikkat gerektiriyor"
+
+#: tasks/templates/tasks/task_list.html:21
+msgid "Past the due date"
+msgstr "Bitiş tarihi geçti"
+
+#: tasks/templates/tasks/task_list.html:22
+msgid "Your progress"
+msgstr "İlerlemeniz"
+
+#: tasks/templates/tasks/task_list.html:22
+#| msgid "Task completed."
+msgid "Task completion"
+msgstr "Görev tamamlama"
+
+#: tasks/templates/tasks/task_list.html:22
+#: tasks/templates/tasks/task_list.html:91
+msgid "of"
+msgstr "/"
+
+#: tasks/templates/tasks/task_list.html:22
+msgid "tasks complete"
+msgstr "görev tamamlandı"
+
+#: tasks/templates/tasks/task_list.html:25
+msgid "Get it out of your head."
+msgstr "Aklınızdakini yazın."
+
+#: tasks/templates/tasks/task_list.html:25
+msgid "Add a task now. Set the details when you're ready."
+msgstr "Şimdi bir görev ekleyin. Ayrıntıları hazır olduğunuzda belirleyin."
+
+#: tasks/templates/tasks/task_list.html:28
+msgid "Task title"
+msgstr "Görev başlığı"
+
+#: tasks/templates/tasks/task_list.html:31
+msgid "＋ Add task"
+msgstr "＋ Görev ekle"
+
+#: tasks/templates/tasks/task_list.html:37
+msgid "Your wins"
+msgstr "Başarılarınız"
+
+#: tasks/templates/tasks/task_list.html:37
+msgid "A little attention"
+msgstr "Biraz ilgi gerekiyor"
+
+#: tasks/templates/tasks/task_list.html:37
+msgid "Your next steps"
+msgstr "Sonraki adımlarınız"
+
+#: tasks/templates/tasks/task_list.html:37
+msgid "JSON ↓"
+msgstr "JSON ↓"
+
+#: tasks/templates/tasks/task_list.html:37
+msgid "CSV ↓"
+msgstr "CSV ↓"
+
+#: tasks/templates/tasks/task_list.html:39
+#| msgid "Delete task"
+msgid "Filter tasks"
+msgstr "Görevleri filtrele"
+
+#: tasks/templates/tasks/task_list.html:40
+msgid "All tasks"
+msgstr "Tüm görevler"
+
+#: tasks/templates/tasks/task_list.html:42
+msgid "Today"
+msgstr "Bugün"
+
+#: tasks/templates/tasks/task_list.html:43
+msgid "Next 7 days"
+msgstr "Önümüzdeki 7 gün"
+
+#: tasks/templates/tasks/task_list.html:45
+msgid "Overdue"
+msgstr "Gecikmiş"
+
+#: tasks/templates/tasks/task_list.html:46
+msgid "No date"
+msgstr "Tarihsiz"
+
+#: tasks/templates/tasks/task_list.html:48
+msgid "Search tasks"
+msgstr "Görev ara"
+
+#: tasks/templates/tasks/task_list.html:48
+#| msgid "Search tasks"
+msgid "Search your tasks…"
+msgstr "Görevlerinizde arayın…"
+
+#: tasks/templates/tasks/task_list.html:48
+msgid "Sort tasks"
+msgstr "Görevleri sırala"
+
+#: tasks/templates/tasks/task_list.html:50
+msgid "Priority first"
+msgstr "Önceliğe göre"
+
+#: tasks/templates/tasks/task_list.html:52
+msgid "Newest first"
+msgstr "En yeni önce"
+
+#: tasks/templates/tasks/task_list.html:53
+msgid "Oldest first"
+msgstr "En eski önce"
+
+#: tasks/templates/tasks/task_list.html:55
+msgid "Filter priority"
+msgstr "Öncelik filtresi"
+
+#: tasks/templates/tasks/task_list.html:57
+msgid "All priorities"
+msgstr "Tüm öncelikler"
+
+#: tasks/templates/tasks/task_list.html:58
+msgid "High priority"
+msgstr "Yüksek öncelik"
+
+#: tasks/templates/tasks/task_list.html:59
+msgid "Normal priority"
+msgstr "Normal öncelik"
+
+#: tasks/templates/tasks/task_list.html:60
+msgid "Low priority"
+msgstr "Düşük öncelik"
+
+#: tasks/templates/tasks/task_list.html:62
+msgid "Tasks per page"
+msgstr "Sayfa başına görev"
+
+#: tasks/templates/tasks/task_list.html:64
+msgid "12 per page"
+msgstr "Sayfada 12 görev"
+
+#: tasks/templates/tasks/task_list.html:65
+msgid "24 per page"
+msgstr "Sayfada 24 görev"
+
+#: tasks/templates/tasks/task_list.html:66
+msgid "48 per page"
+msgstr "Sayfada 48 görev"
+
+#: tasks/templates/tasks/task_list.html:71
+#, python-format
+msgid "%(count)s result"
+msgid_plural "%(count)s results"
+msgstr[0] "%(count)s sonuç"
+msgstr[1] "%(count)s sonuç"
+
+#: tasks/templates/tasks/task_list.html:71
+msgid "for"
+msgstr "için"
+
+#: tasks/templates/tasks/task_list.html:72
+msgid "Clear filters"
+msgstr "Filtreleri temizle"
+
+#: tasks/templates/tasks/task_list.html:77
+msgid "All projects"
+msgstr "Tüm projeler"
+
+#: tasks/templates/tasks/task_list.html:78
+msgid "All tags"
+msgstr "Tüm etiketler"
+
+#: tasks/templates/tasks/task_list.html:84
+msgid "✓ Completed"
+msgstr "✓ Tamamlandı"
+
+#: tasks/templates/tasks/task_list.html:84
+msgid "Overdue ·"
+msgstr "Gecikmiş ·"
+
+#: tasks/templates/tasks/task_list.html:85
+msgid "Edit ↗"
+msgstr "Düzenle ↗"
+
+#: tasks/templates/tasks/task_list.html:88
+msgid "Nothing here just yet"
+msgstr "Henüz burada bir şey yok"
+
+#: tasks/templates/tasks/task_list.html:88
+msgid "A fresh start"
+msgstr "Yeni bir başlangıç"
+
+#: tasks/templates/tasks/task_list.html:88
+msgid "Try a different search or filter to find your tasks."
+msgstr "Görevlerinizi bulmak için farklı bir arama veya filtre deneyin."
+
+#: tasks/templates/tasks/task_list.html:88
+msgid "Clear your mind. Add your first task and take it one step at a time."
+msgstr "Zihninizi boşaltın. İlk görevinizi ekleyin ve adım adım ilerleyin."
+
+#: tasks/templates/tasks/task_list.html:88
+msgid "View all tasks"
+msgstr "Tüm görevleri görüntüle"
+
+#: tasks/templates/tasks/task_list.html:88
+msgid "＋ Create your first task"
+msgstr "＋ İlk görevinizi oluşturun"
+
+#: tasks/templates/tasks/task_list.html:91
+msgid "Pagination"
+msgstr "Sayfalar"
+
+#: tasks/templates/tasks/task_list.html:91
+msgid "← Previous"
+msgstr "← Önceki"
+
+#: tasks/templates/tasks/task_list.html:91
+msgid "tasks"
+msgstr "görev"
+
+#: tasks/templates/tasks/task_list.html:91
+msgid "Next →"
+msgstr "Sonraki →"
+
+#: tasks/templates/tasks/task_list.html:93
+msgid "Keyboard shortcuts"
+msgstr "Klavye kısayolları"
+
+#: tasks/templates/tasks/task_list.html:93
+msgid "Alt"
+msgstr "Alt"
+
+#: tasks/templates/tasks/task_list.html:93
+msgid "Shift"
+msgstr "Shift"
+
+#: tasks/templates/tasks/task_list.html:93
+msgid "N"
+msgstr "N"
+
+#: tasks/templates/tasks/task_list.html:93
+msgid "focuses quick add."
+msgstr "hızlı eklemeye odaklanır."
+
+#: tasks/templates/tasks/task_list.html:93
+msgid "F"
+msgstr "F"
+
+#: tasks/templates/tasks/task_list.html:93
+msgid "focuses search. Shortcuts are inactive while typing in a field."
+msgstr "aramaya odaklanır. Bir alana yazı yazarken kısayollar devre dışıdır."
+
+#: tasks/templates/tasks/trash.html:2
+msgid ""
+"Restore a task or permanently delete it. Nothing is automatically removed."
+msgstr ""
+"Görevi geri yükleyin veya kalıcı olarak silin. Hiçbir şey otomatik olarak "
+"silinmez."
+
+#: tasks/templates/tasks/trash.html:3
+msgid "Restore"
+msgstr "Geri yükle"
+
+#: tasks/templates/tasks/trash.html:3
+msgid "Your trash is empty."
+msgstr "Çöp kutunuz boş."
+
+#: tasks/templates/tasks/trash.html:4
+msgid "Pages"
+msgstr "Sayfalar"
+
+#: tasks/templates/tasks/trash.html:4
+msgid "Previous"
+msgstr "Önceki"
+
+#: tasks/templates/tasks/trash.html:4
+msgid "Next"
+msgstr "Sonraki"
+
+#: tasks/templates/tasks/verify_email.html:1
+msgid "Verify email"
+msgstr "E-postayı doğrula"
+
+#: tasks/templates/tasks/verify_email.html:1
+msgid "Confirm my email address"
+msgstr "E-posta adresimi doğrula"
+
+#: tasks/views.py:59
+msgid "Welcome! Make room for what matters."
+msgstr "Hoş geldiniz! Önemli şeylere yer açın."
+
+#: tasks/views.py:133
+msgid "Task added. Add another whenever you're ready."
+msgstr "Görev eklendi. Hazır olduğunuzda bir yenisini ekleyin."
+
+#: tasks/views.py:171
+msgid "Task added. One step closer."
+msgstr "Görev eklendi. Bir adım daha ileride."
+
+#: tasks/views.py:190
+msgid "Task updated."
+msgstr "Görev güncellendi."
+
+#: tasks/views.py:214
+msgid "Task moved to trash."
+msgstr "Görev çöp kutusuna taşındı."
+
+#: tasks/views.py:238
+msgid "Task completed."
+msgstr "Görev tamamlandı."
+
+#: tasks/views.py:238
+msgid "Task reopened."
+msgstr "Görev yeniden açıldı."
+
+#: tasks/views.py:272
+msgid "Task copied. Adjust the details for a fresh start."
+msgstr "Görev kopyalandı. Yeni bir başlangıç için ayrıntıları düzenleyin."
+
+#: tasks/views.py:285
+msgid "This task is already scheduled later; its date was kept."
+msgstr "Bu görev zaten daha ileri bir tarihte; tarihi korundu."
+
+#: tasks/views.py:289
+msgid "Due date updated."
+msgstr "Bitiş tarihi güncellendi."

@@ -35,6 +35,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          for variable in SSH_HOST SSH_USER DEPLOY_PATH; do
+            if [[ -z "${!variable}" ]]; then
+              echo "::error::Set $variable in the production environment before deployment."
+              exit 1
+            fi
+          done
           [[ "$SSH_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]]
           [[ "$SSH_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
           [[ "$SSH_PORT" =~ ^[0-9]+$ ]]

@@ -1,0 +1,7 @@
+{% extends 'tasks/base.html' %}{% load i18n %}{% block content %}
+<h1>{% translate "Account settings" %}</h1><section class="form-card">
+<form method="post">{% csrf_token %}{{ form.as_div }}<button class="button primary" type="submit">{% translate "Save preferences" %}</button></form>
+<p><a href="{% url 'password_change' %}">{% translate "Change password" %}</a></p>
+{% if profile.email_is_verified %}<p>{% translate "Email verified." %}</p>{% else %}<form method="post" action="{% url 'send-verification' %}">{% csrf_token %}<button class="button" type="submit">{% translate "Send verification email" %}</button></form>{% endif %}
+{% if not mail_enabled %}<p class="helptext">{% translate "Email delivery is not configured yet." %}</p>{% endif %}
+</section>{% endblock %}

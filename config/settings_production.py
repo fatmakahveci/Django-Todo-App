@@ -36,3 +36,21 @@ SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 31536000
 # The reverse proxy must overwrite this header and be the only public entry point.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+if MAIL_ENABLED and not PUBLIC_BASE_URL.startswith('https://'):
+    from django.core.exceptions import ImproperlyConfigured
+    raise ImproperlyConfigured('Email delivery in production requires an HTTPS PUBLIC_BASE_URL.')
+
+# Avoid logging password-reset URLs, task content, IP addresses, or exception values.
+LOGGING = {
+    'version': 1, 'disable_existing_loggers': False,
+    'formatters': {'private': {'()': 'tasks.observability.PrivateErrorFormatter'}},
+    'handlers': {
+        'private_console': {'class': 'logging.StreamHandler', 'formatter': 'private', 'level': 'ERROR'},
+        'error_webhook': {'()': 'tasks.observability.ErrorWebhookHandler', 'endpoint': os.environ.get('ERROR_WEBHOOK_URL', '')},
+    },
+    'loggers': {
+        'django': {'handlers': ['private_console', 'error_webhook'], 'level': 'ERROR', 'propagate': False},
+        'django.server': {'handlers': ['private_console'], 'level': 'ERROR', 'propagate': False},
+    },
+}
