@@ -5,24 +5,76 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
 
 jobs:
   test:
-    timeout-minutes: 60
+    name: Python ${{ matrix.python-version }}
+    timeout-minutes: 15
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings_ci
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
           cache: pip
+          cache-dependency-path: requirements.txt
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install -r requirements.txt
+          python -m pip check
+      - name: Check Django configuration
+        run: python manage.py check
+      - name: Check for missing migrations
+        run: python manage.py makemigrations --check --dry-run
+      - name: Verify migrations on a fresh database
+        run: python manage.py migrate --noinput
       - name: Run tests
-        run: python manage.py test
+        run: python -Wa manage.py test --noinput
+
+  container:
+    name: Docker smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build and start container
+        run: |
+          docker build --tag todo-app:ci .
+          docker run --detach --name todo-ci \
+            -e DJANGO_SECRET_KEY="$(openssl rand -hex 32)" \
+            -e DJANGO_ALLOWED_HOSTS=localhost \
+            todo-app:ci sh -c 'python manage.py migrate --noinput && exec gunicorn config.wsgi:application --bind 0.0.0.0:8000'
+      - name: Wait for HTTP readiness
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            if [ "$(docker inspect --format '{{.State.Health.Status}}' todo-ci)" = healthy ]; then
+              exit 0
+            fi
+            sleep 3
+          done
+          docker logs todo-ci
+          exit 1
+      - name: Verify admin static files
+        run: |
+          docker exec todo-ci python -c 'from urllib.request import Request, urlopen; request = Request("http://127.0.0.1:8000/static/admin/css/base.css", headers={"Host": "localhost", "X-Forwarded-Proto": "https"}); assert urlopen(request).status == 200'
+      - name: Clean up container
+        if: always()
+        run: docker rm --force todo-ci || true

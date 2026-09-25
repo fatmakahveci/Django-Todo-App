@@ -12,20 +12,29 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: source-package-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
+  validate:
+    name: Validate release
+    uses: ./.github/workflows/django.yml
+
   publish:
-    timeout-minutes: 60
+    needs: validate
+    permissions:
+      contents: read
+      packages: write
+    timeout-minutes: 15
     name: Publish OCI source package
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Install ORAS
         uses: oras-project/setup-oras@1d808f7d7f6995cc68b7bf507bfe5c5446e1dc9d # v2.0.1

@@ -1,0 +1,38 @@
+{% extends 'tasks/base.html' %}
+{% block title %}{% if object %}Edit task{% else %}New task{% endif %}{% endblock %}
+{% block content %}
+<a class="back-link" href="{% if return_to %}{{ return_to }}{% else %}{% url 'tasks' %}{% endif %}">← Back to tasks</a>
+<div class="form-heading">
+  <p class="eyebrow">MAKE A LITTLE PROGRESS</p>
+  <h1>{% if object %}Fine-tune the plan{% else %}Start with one thing.{% endif %}</h1>
+  <p class="subtitle">A clear next step is a good place to begin.</p>
+</div>
+<div class="editor-layout">
+  <form class="form-card task-editor" method="post">
+    {% csrf_token %}
+    {% if return_to %}<input type="hidden" name="return_to" value="{{ return_to }}">{% endif %}
+    {% if form.non_field_errors %}<div role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="editor-fields">
+      {% for field in form %}
+      <div class="field field-{{ field.name }} {% if field.errors %}has-error{% endif %}">
+        {% if field.name == 'complete' %}
+        <div class="checkbox-field">{{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+        {% else %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-mark" aria-hidden="true"> *</span>{% else %}<span class="optional">Optional</span>{% endif %}</label>
+        {{ field }}
+        {% endif %}
+        {% if field.errors %}<div role="alert">{{ field.errors }}</div>{% endif %}
+        {% if field.help_text %}<div class="helptext" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="form-actions"><button class="button primary" type="submit">{% if object %}Save changes{% else %}Create task{% endif %}<span aria-hidden="true">↗</span></button>{% if not object %}<button class="button" type="submit" name="add_another" value="true">Save & add another</button>{% endif %}<a class="button secondary" href="{% if return_to %}{{ return_to }}{% else %}{% url 'tasks' %}{% endif %}">Cancel</a></div>
+  </form>
+  <aside class="editor-aside" aria-label="Planning tips">
+    <span class="aside-symbol" aria-hidden="true">✳</span>
+    <h2>Keep it<br>achievable.</h2>
+    <p>The best task is one you know how to start.</p>
+    <ol><li><strong>Name the next step.</strong> Start with an action, like “Write the first draft.”</li><li><strong>Give it context.</strong> Add the notes you'll want when you come back.</li><li><strong>Set your own pace.</strong> A due date is optional. Pick one when it helps.</li></ol>
+  </aside>
+</div>
+{% endblock %}

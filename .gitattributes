@@ -1,0 +1,7 @@
+# Keep local data and environment files out of git archive release packages.
+*.sqlite3 export-ignore
+*.sqlite3-* export-ignore
+.env export-ignore
+.env.* export-ignore
+deploy/.env.example -export-ignore
+.venv/ export-ignore

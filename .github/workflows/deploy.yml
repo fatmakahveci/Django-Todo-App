@@ -1,0 +1,73 @@
+name: Deploy to server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    uses: ./.github/workflows/django.yml
+
+  deploy:
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SSH_HOST: ${{ vars.SSH_HOST }}
+      SSH_USER: ${{ vars.SSH_USER }}
+      SSH_PORT: ${{ vars.SSH_PORT || '22' }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$SSH_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]]
+          [[ "$SSH_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          [[ "$SSH_PORT" =~ ^[0-9]+$ ]]
+          [[ "$DEPLOY_PATH" =~ ^/[a-zA-Z0-9_/-]+$ && "$DEPLOY_PATH" != / ]]
+      - name: Build image for the server
+        run: |
+          docker build --pull --tag "todo-app:$GITHUB_SHA" .
+          docker save "todo-app:$GITHUB_SHA" | gzip > image.tar.gz
+          sha256sum image.tar.gz > image.tar.gz.sha256
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$SSH_KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Transfer and deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$SSH_USER@$SSH_HOST"
+          release_path="$DEPLOY_PATH/releases/$GITHUB_SHA"
+          ssh_options=(-o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15)
+          ssh "${ssh_options[@]}" -p "$SSH_PORT" "$target" "mkdir -p '$release_path'"
+          scp "${ssh_options[@]}" -P "$SSH_PORT" \
+            image.tar.gz image.tar.gz.sha256 deploy/compose.yml deploy/remote-deploy.sh \
+            "$target:$release_path/"
+          ssh "${ssh_options[@]}" -p "$SSH_PORT" "$target" \
+            "bash '$release_path/remote-deploy.sh' '$DEPLOY_PATH' '$GITHUB_SHA'"
+      - name: Remove SSH credentials
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts

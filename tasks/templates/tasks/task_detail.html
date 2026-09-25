@@ -1,0 +1,11 @@
+{% extends 'tasks/base.html' %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'tasks' %}">← Back to tasks</a>
+<article class="detail-card"><div class="task-meta"><span class="badge priority-{{ task.priority }}">{{ task.get_priority_display }} priority</span><span class="badge">{% if task.complete %}Completed{% else %}To do{% endif %}</span></div><h1>{{ task.title }}</h1><div class="description">{{ task.description|default:'No notes added yet.'|linebreaks }}</div><dl><div><dt>Created</dt><dd>{{ task.create|date:'j M Y' }}</dd></div><div><dt>Due date</dt><dd class="{% if task.is_overdue %}overdue{% endif %}">{{ task.due_date|date:'j M Y'|default:'No due date' }}</dd></div></dl><div class="form-actions"><a class="button primary" href="{% url 'task-update' task.pk %}">Edit task</a><form method="post" action="{% url 'task-status' task.pk %}">{% csrf_token %}<input type="hidden" name="complete" value="{% if task.complete %}false{% else %}true{% endif %}"><button class="button" type="submit">{% if task.complete %}Reopen task{% else %}Mark complete{% endif %}</button></form><a class="danger-link" href="{% url 'task-delete' task.pk %}">Delete task</a></div><section class="task-utilities" aria-label="Task actions">
+<form method="post" action="{% url 'task-duplicate' task.pk %}">{% csrf_token %}<button class="button" type="submit">Duplicate task</button></form>
+{% if not task.complete %}
+<form method="post" action="{% url 'task-postpone' task.pk %}">{% csrf_token %}<button class="button" type="submit" name="days" value="1">Move to tomorrow</button><button class="button" type="submit" name="days" value="7">Move to next week</button></form>
+{% endif %}
+</section></article>
+{% endblock %}
