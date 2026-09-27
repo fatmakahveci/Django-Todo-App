@@ -16,7 +16,9 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 
 from .forms import QuickTaskForm, TaskForm
@@ -44,6 +46,7 @@ class CustomLoginView(LoginView):
     next_page = reverse_lazy("tasks")
 
 
+@method_decorator(sensitive_post_parameters('password1', 'password2'), name='dispatch')
 class RegisterPage(FormView):
     template_name = "tasks/auth_register.html"
     form_class = RegistrationForm

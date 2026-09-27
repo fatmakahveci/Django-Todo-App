@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
+
 # Resolve paths from the repository root, regardless of the working directory.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,8 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b5nfsfxw6bn3g@(9c!b_tgtqvfpp+x)x6k9f!y_3934-c5dc!a'
+# A missing development key is ephemeral, never a shared secret committed to Git.
+# Set DJANGO_SECRET_KEY locally for sessions that survive server restarts.
+# Production still requires and validates an explicit environment secret.
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or get_random_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'tasks.middleware.RequestSizeLimitMiddleware',
     'tasks.observability.ErrorIdMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -154,3 +159,5 @@ MAILERS = {'default': {
 PASSWORD_RESET_TIMEOUT = 3600
 
 LANGUAGES = [('en', 'English'), ('tr', 'Türkçe')]
+
+SECURE_REFERRER_POLICY = "no-referrer"

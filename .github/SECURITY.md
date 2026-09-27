@@ -55,9 +55,9 @@ State whether you would like to be credited in any public advisory.
 ## Deployment Context
 
 The checked-in settings in `config/settings.py` are for local development:
-they enable `DEBUG` and contain a development secret key. They should not be
-treated as a production configuration. Never reuse the checked-in key for a
-public deployment or commit production credentials or personal task data.
+they enable `DEBUG` and generate an ephemeral signing key when none is configured.
+Use `config.settings_production` for deployment, with a separately configured
+strong secret. Never commit production credentials or personal task data.
 
 ## Application Controls
 
@@ -71,7 +71,10 @@ public deployment or commit production credentials or personal task data.
   after a five-minute grace period for requests crossing window boundaries.
 - Dynamic responses prohibit caching and include a restrictive Content Security
   Policy. Production requires HTTPS cookies, a strong signing key, and explicit hosts.
-- Request bodies are limited to 64 KiB and 50 form fields; task notes to 10,000 characters.
+- Requests declaring bodies larger than 64 KiB are rejected before CSRF or
+  multipart parsing, including file contents. Keep the reverse proxy's 64 KiB
+  body limit enabled to enforce the limit at the transport layer too.
+  Forms are limited to 50 fields; task notes to 10,000 characters.
 
 Account throttling can temporarily affect legitimate users if someone targets
 that username. Fixed windows do not fully prevent distributed attacks; combine
@@ -84,3 +87,19 @@ container directly when trusting forwarded HTTPS or client-IP headers.
 The local database is excluded from future commits and release archives. Old
 commits can still contain database copies or secrets. Rotate/revoke any production
 credentials or sessions that were committed and coordinate history cleanup separately.
+
+
+### Account abuse protections
+
+Password checks in account settings, password change, and both admin password-change
+views share a per-user limit of 10 POSTs per five-minute window. Reset and verification
+emails share a per-recipient limit of 5 POSTs per window; verification also has a
+per-account limit. These budgets supplement existing IP limits, so changing IPs
+alone does not bypass them. Bucket identifiers are HMACs, not raw email addresses.
+The limits count attempts, including invalid requests, and expire automatically.
+Account-setting and registration error reports mark password fields as sensitive. Dynamic pages
+use `Referrer-Policy: no-referrer` to keep private paths out of Referer headers.
+
+The default development signing key is generated at startup rather than committed.
+Production still requires a separately configured strong secret. An old development
+key present in repository history must never be used in any deployed environment.

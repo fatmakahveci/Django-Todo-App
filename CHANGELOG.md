@@ -10,6 +10,10 @@ where applicable.
 
 ### Security
 
+- Close IP-rotation bypasses for password checks and account email throttling.
+- Remove the shared development signing key and suppress private URL referrers.
+- Mark account-setting passwords as sensitive in Django error reports.
+
 - Private structured error events and access logs without reset tokens or request data.
 - Signed, expiring email verification and throttled password reset requests.
 

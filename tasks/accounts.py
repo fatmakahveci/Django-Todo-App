@@ -13,6 +13,8 @@ from django.db import transaction
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.utils.decorators import method_decorator
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views import View
 from django.views.generic import FormView
 
@@ -72,6 +74,7 @@ class PreferencesForm(forms.ModelForm):
         return profile
 
 
+@method_decorator(sensitive_post_parameters('current_password'), name='dispatch')
 class AccountSettings(LoginRequiredMixin, FormView):
     template_name = 'tasks/account_settings.html'
     form_class = PreferencesForm
