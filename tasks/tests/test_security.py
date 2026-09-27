@@ -82,3 +82,52 @@ class SecurityTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['form'].errors.get('description'))
         self.assertEqual(Task.objects.count(), 0)
+
+
+class AccountAbuseTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user('account-owner', email='owner@example.test')
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_password_checks_share_a_user_budget_across_ips_and_routes(self):
+        for index in range(10):
+            path = '/account/' if index % 2 else '/account/password/'
+            response = self.client.post(path, {
+                'email': 'changed@example.test', 'current_password': 'wrong',
+                'old_password': 'wrong', 'language': 'en', 'timezone': 'UTC', 'reminder_hour': 8,
+            }, REMOTE_ADDR=f'198.51.100.{index}')
+            self.assertEqual(response.status_code, 200)
+        response = self.client.post('/account/password/', {'old_password': 'wrong'}, REMOTE_ADDR='203.0.113.1')
+        self.assertEqual(response.status_code, 429)
+
+    def test_reset_recipient_budget_cannot_be_bypassed_by_rotating_ips(self):
+        self.client.logout()
+        for index in range(5):
+            self.assertEqual(self.client.post('/password-reset/', {'email': 'Owner@example.test'},
+                REMOTE_ADDR=f'198.51.100.{index}').status_code, 200)
+        response = self.client.post('/password-reset/', {'email': 'owner@EXAMPLE.TEST'}, REMOTE_ADDR='203.0.113.1')
+        self.assertEqual(response.status_code, 429)
+        self.assertNotIn('owner', ''.join(AuthAttemptBucket.objects.values_list('key', flat=True)))
+
+    def test_verification_mail_is_limited_per_account_across_ips(self):
+        for index in range(5):
+            self.assertEqual(self.client.post('/account/verify/send/', REMOTE_ADDR=f'198.51.100.{index}').status_code, 302)
+        self.assertEqual(self.client.post('/account/verify/send/', REMOTE_ADDR='203.0.113.1').status_code, 429)
+
+
+    def test_reset_and_verification_share_recipient_budget(self):
+        for index in range(5):
+            self.client.post('/account/verify/send/', REMOTE_ADDR=f'198.51.100.{index}')
+        self.client.logout()
+        self.assertEqual(self.client.post('/password-reset/', {'email': self.user.email},
+            REMOTE_ADDR='203.0.113.1').status_code, 429)
+
+    def test_account_password_is_marked_sensitive_for_error_reports(self):
+        response = self.client.post('/account/', {'current_password': 'private-value'})
+        self.assertIn('current_password', response.wsgi_request.sensitive_post_parameters)
+
+    def test_private_links_are_not_sent_as_referrers(self):
+        self.assertEqual(self.client.get('/account/')['Referrer-Policy'], 'no-referrer')

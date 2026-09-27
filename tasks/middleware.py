@@ -13,10 +13,29 @@ from django.utils.deprecation import MiddlewareMixin
 from .models import AuthAttemptBucket
 
 
+class RequestSizeLimitMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        # Django's multipart form-data limit excludes uploaded file contents.
+        # Reject the whole request before CSRF parsing can spool files to disk.
+        limit = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
+        try:
+            length = int(request.META.get('CONTENT_LENGTH') or 0)
+        except (TypeError, ValueError):
+            return HttpResponse('Invalid Content-Length.', status=400, content_type='text/plain')
+        if length < 0:
+            return HttpResponse('Invalid Content-Length.', status=400, content_type='text/plain')
+        if limit is not None and length > limit:
+            response = HttpResponse('Request body too large.', status=413, content_type='text/plain')
+            add_never_cache_headers(response)
+            return response
+        return None
+
+
 class AppSecurityMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
         name = request.resolver_match.view_name if request.resolver_match else None
-        if request.method != "POST" or name not in {"login", "register", "admin:login", "password_reset", "send-verification"}:
+        password_checks = {"account-settings", "password_change", "admin:password_change", "admin:auth_user_password_change"}
+        if request.method != "POST" or name not in {"login", "register", "admin:login", "password_reset", "send-verification"} | password_checks:
             return None
         now = timezone.now()
         window = int(now.timestamp()) // 300
@@ -34,6 +53,19 @@ class AppSecurityMiddleware(MiddlewareMixin):
         username = unicodedata.normalize("NFKC", request.POST.get("username", "")).casefold().strip()
         if name in {"password_reset", "send-verification"}:
             rules.append((f"email:{address}", 5))
+        # Account/recipient budgets remain effective when an attacker changes IPs.
+        if name == "password_reset":
+            email = unicodedata.normalize("NFKC", request.POST.get("email", "")).casefold().strip()
+            if email:
+                rules.append((f"mail-recipient:{email}", 5))
+        if request.user.is_authenticated:
+            if name in password_checks:
+                rules.append((f"password-check:{request.user.pk}", 10))
+            elif name == "send-verification":
+                rules.append((f"verification-user:{request.user.pk}", 5))
+                email = unicodedata.normalize("NFKC", request.user.email).casefold().strip()
+                if email:
+                    rules.append((f"mail-recipient:{email}", 5))
         if username and name in {"login", "admin:login"}:
             rules.append((f"account:{username}", 10))
         AuthAttemptBucket.objects.filter(expires_at__lte=now - timedelta(minutes=5)).delete()
@@ -53,5 +85,5 @@ class AppSecurityMiddleware(MiddlewareMixin):
         add_never_cache_headers(response)
         response.setdefault("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
         response.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-        response.setdefault("Referrer-Policy", "same-origin")
+        response.setdefault("Referrer-Policy", "no-referrer")
         return response
